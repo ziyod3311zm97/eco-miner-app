@@ -38,9 +38,20 @@ def init_db():
         )
     ''')
 
+    # 3. Bajarilgan vazifalar jadvali
+    cursor.execute('''
+        CREATE TABLE IF NOT EXISTS user_tasks (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            user_id BIGINT NOT NULL,
+            task_id TEXT NOT NULL,
+            FOREIGN KEY (user_id) REFERENCES users (telegram_id),
+            UNIQUE(user_id, task_id)
+        )
+    ''')
+
     conn.commit()
     conn.close()
 
 if __name__ == "__main__":
     init_db()
-    print("Ma'lumotlar bazasi muvaffaqiyatli yaratildi!")
+    print("Ma'lumotlar bazasi muvaffaqiyatli yangilandi!")
