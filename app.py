@@ -7,10 +7,11 @@ import os
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
+# Ma'lumotlar bazasini ishga tushirish
 init_db()
 
-# Telegram Bot va Kanal sozlamalari
-BOT_TOKEN = "8995342958:AAEYriJLB4BvroCOF7qLBsptPqFeyT8dWDg" # BotFather'dan olingan token
+# Telegram Bot va Kanal sozlamalari (Siz bergan token)
+BOT_TOKEN = "8995342958:AAEYriJLB4BvroCOF7qLBsptPqFeyT8dWDg"
 CHANNEL_USERNAME = "@EcominerQ"
 
 UPGRADES_CONFIG = {
@@ -27,7 +28,7 @@ TASKS_CONFIG = [
 ]
 
 def check_telegram_subscription(user_id):
-    """Telegram Bot API orqali kanalga obunani tekshirish"""
+    """Telegram Bot API orqali foydalanuvchining kanalga obuna bo'lganini tekshiradi"""
     try:
         url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember?chat_id={CHANNEL_USERNAME}&user_id={user_id}"
         req = urllib.request.urlopen(url)
@@ -35,6 +36,7 @@ def check_telegram_subscription(user_id):
         
         if res.get('ok'):
             status = res['result']['status']
+            # member, administrator, creator bo'lsa obuna tasdiqlanadi
             return status in ['member', 'administrator', 'creator']
     except Exception as e:
         print(f"Obunani tekshirishda xatolik: {e}")
@@ -213,12 +215,13 @@ def complete_task():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Haqiqiy shartlarni tekshirish
+    # 1. Telegram kanalga obuna shartini tekshirish
     if task_id == 'sub_channel':
         if not check_telegram_subscription(telegram_id):
             conn.close()
             return jsonify({'error': 'Siz hali @EcominerQ kanaliga obuna bo\'lmadingiz!'}), 400
 
+    # 2. CO2 darajasi sharti
     elif task_id == 'eco_clean':
         cursor.execute("SELECT co2_level FROM users WHERE telegram_id = ?", (telegram_id,))
         user = cursor.fetchone()
