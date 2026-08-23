@@ -1,11 +1,17 @@
 from flask import Flask, request, jsonify, send_from_directory
 from database import get_db_connection, init_db
+import urllib.request
+import json
 import time
 import os
 
 app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 init_db()
+
+# Telegram Bot Tokeningizni kiriting
+BOT_TOKEN = "7883984368:AA..." # BotFather'dan olgan BOT TOKEN'ingizni shu yerga qo'ying
+CHANNEL_USERNAME = "@EcominerQ" # Botingiz admin bo'lgan kanal
 
 UPGRADES_CONFIG = {
     'solar': {'base_price': 10, 'power_add': 0.5, 'co2_improve': 2.0},
@@ -20,9 +26,31 @@ TASKS_CONFIG = [
     {'id': 'eco_clean', 'title': 'CO2 darajasini 100% ga yetkazish', 'reward': 300, 'icon': '🌍'}
 ]
 
+def check_telegram_subscription(user_id):
+    """Telegram Bot API orqali foydalanuvchining kanalga obuna bo'lganini tekshiradi"""
+    try:
+        url = f"https://api.telegram.org/bot{BOT_TOKEN}/getChatMember?chat_id={CHANNEL_USERNAME}&user_id={user_id}"
+        req = urllib.request.urlopen(url)
+        res = json.loads(req.read().decode('utf-8'))
+        
+        if res.get('ok'):
+            status = res['result']['status']
+            # administrator, creator, member - obuna bo'lganligini bildiradi
+            return status in ['member', 'administrator', 'creator']
+    except Exception as e:
+        print(f"Obunani tekshirishda xatolik: {e}")
+    return False
+
 @app.route('/')
 def index():
-    # Asosiy ildiz papkadagi index.html faylini uzatish
+    return send_from_directory('.', 'index.html')
+
+@app.route('/<path:path>')
+def serve_static(path):
+    if os.path.exists(os.path.join('.', path)):
+        return send_from_directory('.', path)
+    elif os.path.exists(os.path.join('static', path)):
+        return send_from_directory('static', path)
     return send_from_directory('.', 'index.html')
 
 @app.route('/api/user/init', methods=['POST'])
@@ -185,6 +213,21 @@ def complete_task():
 
     conn = get_db_connection()
     cursor = conn.cursor()
+
+    # 1. Telegram Kanalga obuna bo'lish shartini tekshirish
+    if task_id == 'sub_channel':
+        is_subscribed = check_telegram_subscription(telegram_id)
+        if not is_subscribed:
+            conn.close()
+            return jsonify({'error': 'Siz hali @EcominerQ kanaliga obuna bo\'lmadingiz!'}), 400
+
+    # 2. CO2 darajasini tekshirish
+    elif task_id == 'eco_clean':
+        cursor.execute("SELECT co2_level FROM users WHERE telegram_id = ?", (telegram_id,))
+        user = cursor.fetchone()
+        if not user or user['co2_level'] < 100.0:
+            conn.close()
+            return jsonify({'error': 'CO2 darajangiz hali 100% ga yetgani yo\'q!'}), 400
 
     try:
         cursor.execute("INSERT INTO user_tasks (user_id, task_id) VALUES (?, ?)", (telegram_id, task_id))
