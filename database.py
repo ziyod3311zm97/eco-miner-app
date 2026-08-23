@@ -1,7 +1,6 @@
 import sqlite3
 import os
 
-# Render.com'da PostgreSQL yoki lokalda SQLite'dan foydalanish
 DB_FILE = os.environ.get("DATABASE_URL", "eco_miner.db")
 
 def get_db_connection():
@@ -21,19 +20,19 @@ def init_db():
             username TEXT,
             first_name TEXT,
             balance REAL DEFAULT 0.0,
-            energy_rate REAL DEFAULT 1.0,  -- Soatiga/soniyasiga yig'iladigan $GREEN
-            co2_level REAL DEFAULT 100.0,   # 100% = Toza, 0% = Juda iflos
+            energy_rate REAL DEFAULT 1.0,
+            co2_level REAL DEFAULT 100.0,
             last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
             referrer_id BIGINT DEFAULT NULL
         )
     ''')
 
-    # 2. Upgradelar (Sotib olingan stantsiyalar) jadvali
+    # 2. Upgradelar jadvali
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS user_upgrades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
             user_id BIGINT NOT NULL,
-            upgrade_type TEXT NOT NULL,     # 'solar', 'wind', 'hydro', 'geothermal'
+            upgrade_type TEXT NOT NULL,
             level INTEGER DEFAULT 1,
             FOREIGN KEY (user_id) REFERENCES users (telegram_id)
         )
@@ -44,4 +43,4 @@ def init_db():
 
 if __name__ == "__main__":
     init_db()
-    print("Ma'lumotlar bazasi va jadvallar muvaffaqiyatli yaratildi!")
+    print("Ma'lumotlar bazasi muvaffaqiyatli yaratildi!")
