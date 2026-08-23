@@ -1,0 +1,157 @@
+:root {
+    --bg-color: #0f172a;
+    --card-bg: #1e293b;
+    --accent-color: #22c55e;
+    --text-color: #f8fafc;
+    --text-sub: #94a3b8;
+}
+
+body {
+    margin: 0;
+    padding: 16px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    user-select: none;
+    -webkit-user-select: none;
+}
+
+#app {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.stats-card {
+    background: var(--card-bg);
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(34, 197, 94, 0.2);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+}
+
+.value-box {
+    font-size: 28px;
+    font-weight: 800;
+    color: var(--accent-color);
+    margin-top: 4px;
+}
+
+.unit { font-size: 16px; color: var(--text-sub); }
+
+.stat-group {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+    font-size: 14px;
+}
+
+.miner-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 20px 0;
+}
+
+.eco-globe {
+    position: relative;
+    width: 170px;
+    height: 170px;
+    background: radial-gradient(circle, #22c55e 0%, #15803d 100%);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 80px;
+    cursor: pointer;
+    box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
+    transition: transform 0.1s ease;
+}
+
+.eco-globe:active {
+    transform: scale(0.92);
+}
+
+.tap-hint {
+    color: var(--text-sub);
+    font-size: 13px;
+    margin-top: 12px;
+}
+
+.upgrades-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.upgrade-card {
+    background: var(--card-bg);
+    padding: 12px 16px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.upgrade-btn {
+    background: var(--accent-color);
+    border: none;
+    color: #000;
+    font-weight: bold;
+    padding: 8px 14px;
+    border-radius: 8px;
+    cursor: pointer;
+}
+
+.upgrade-btn:disabled {
+    background: #475569;
+    color: #94a3b8;
+}
+
+/* Modal */
+.modal {
+    position: fixed;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.hidden { display: none; }
+
+.modal-content {
+    background: var(--card-bg);
+    padding: 24px;
+    border-radius: 16px;
+    text-align: center;
+    max-width: 300px;
+}
+
+.modal-content button {
+    background: var(--accent-color);
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-weight: bold;
+    margin-top: 12px;
+}
+
+/* Tap animatsiyasi (Sonlar uchib chiqishi) */
+.floating-number {
+    position: absolute;
+    color: #4ade80;
+    font-weight: bold;
+    font-size: 24px;
+    pointer-events: none;
+    animation: floatUp 0.8s ease-out forwards;
+}
+
+@keyframes floatUp {
+    0% { opacity: 1; transform: translateY(0); }
+    100% { opacity: 0; transform: translateY(-50px); }
+}
