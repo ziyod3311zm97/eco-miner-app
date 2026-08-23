@@ -10,7 +10,7 @@ app = Flask(__name__, static_folder='static', static_url_path='/static')
 init_db()
 
 # Telegram Bot va Kanal sozlamalari
-BOT_TOKEN = "7883984368:AA..." # BotFather'dan olingan token
+BOT_TOKEN = "8995342958:AAEYriJLB4BvroCOF7qLBsptPqFeyT8dWDg" # BotFather'dan olingan token
 CHANNEL_USERNAME = "@EcominerQ"
 
 UPGRADES_CONFIG = {
