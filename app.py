@@ -3,7 +3,7 @@ from database import get_db_connection, init_db
 import time
 import os
 
-app = Flask(__name__, static_folder='static')
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 init_db()
 
@@ -14,7 +14,6 @@ UPGRADES_CONFIG = {
     'geothermal': {'base_price': 1000, 'power_add': 70.0, 'co2_improve': 25.0}
 }
 
-# Statik vazifalar ro'yxati
 TASKS_CONFIG = [
     {'id': 'sub_channel', 'title': 'Telegram kanalga obuna bo\'lish', 'reward': 500, 'icon': '📢'},
     {'id': 'invite_3', 'title': '3 ta do\'stni taklif qilish', 'reward': 1500, 'icon': '👥'},
@@ -23,7 +22,8 @@ TASKS_CONFIG = [
 
 @app.route('/')
 def index():
-    return send_from_directory('static', 'index.html')
+    # Asosiy ildiz papkadagi index.html faylini uzatish
+    return send_from_directory('.', 'index.html')
 
 @app.route('/api/user/init', methods=['POST'])
 def init_user():
@@ -75,7 +75,6 @@ def init_user():
     cursor.execute("SELECT upgrade_type, level FROM user_upgrades WHERE user_id = ?", (telegram_id,))
     upgrades = {row['upgrade_type']: row['level'] for row in cursor.fetchall()}
 
-    # Bajarilgan tasklarni olish
     cursor.execute("SELECT task_id FROM user_tasks WHERE user_id = ?", (telegram_id,))
     completed_tasks = [row['task_id'] for row in cursor.fetchall()]
 
@@ -174,7 +173,6 @@ def buy_upgrade():
         'new_level': new_level
     })
 
-# 4. Vazifani bajarish APIsi
 @app.route('/api/tasks/complete', methods=['POST'])
 def complete_task():
     data = request.json or {}
@@ -198,16 +196,15 @@ def complete_task():
         conn.close()
         
         return jsonify({'success': True, 'reward': task['reward'], 'new_balance': new_balance})
-    except sqlite3.IntegrityError:
+    except Exception:
         conn.close()
         return jsonify({'error': 'Vazifa allaqachon bajarilgan'}), 400
 
-# 5. Telegram Stars mukofotini berish (To'lovdan so'ng)
 @app.route('/api/stars/credit', methods=['POST'])
 def credit_stars():
     data = request.json or {}
     telegram_id = data.get('telegram_id')
-    pack_type = data.get('pack_type') # 'boost_10' / 'boost_50'
+    pack_type = data.get('pack_type')
 
     conn = get_db_connection()
     cursor = conn.cursor()
