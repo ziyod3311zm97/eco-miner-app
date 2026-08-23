@@ -10,9 +10,23 @@ let upgradesConfig = {};
 let pendingTaps = 0;
 let tapTimeout = null;
 
+const UPGRADES_ICONS = {
+    'solar': '☀️',
+    'wind': '🌬️',
+    'hydro': '🌊',
+    'geothermal': '⚛️'
+};
+
+const UPGRADES_NAMES = {
+    'solar': 'Quyosh Panellari',
+    'wind': 'Shamol Generatori',
+    'hydro': 'Gidro/Atom Stansiya',
+    'geothermal': 'Geotermal Stansiya'
+};
+
 async function initApp() {
     const initData = tg?.initDataUnsafe || {};
-    const telegram_id = initData.user?.id || 12345678; // Test uchun
+    const telegram_id = initData.user?.id || 12345678;
     const username = initData.user?.username || 'test_user';
     const first_name = initData.user?.first_name || 'Test';
     const start_param = initData.start_param || null;
@@ -59,7 +73,7 @@ function updateUI() {
     document.getElementById('co2-level').innerText = Math.round(userState.co2_level);
 }
 
-// Tap mantiqi
+// Tap hodisasi
 document.getElementById('tap-btn').addEventListener('click', (e) => {
     const earned = 1.0 * (userState.co2_level / 100);
     userState.balance += earned;
@@ -88,7 +102,7 @@ async function sendTaps() {
             updateUI();
         }
     } catch (e) {
-        console.error("Tap yuborishda xato", e);
+        console.error("Tap yuborishda xatolik", e);
     }
 }
 
@@ -113,13 +127,18 @@ function renderUpgrades(userUpgrades) {
     for (const [key, cfg] of Object.entries(upgradesConfig)) {
         const lvl = userUpgrades[key] || 0;
         const price = (cfg.base_price * Math.pow(1.5, lvl)).toFixed(2);
+        const icon = UPGRADES_ICONS[key] || '⚡';
+        const name = UPGRADES_NAMES[key] || key.toUpperCase();
 
         const card = document.createElement('div');
         card.className = 'upgrade-card';
         card.innerHTML = `
-            <div>
-                <strong>${key.toUpperCase()} (Lvl ${lvl})</strong>
-                <div class="sub-text">+${cfg.power_add} W/h</div>
+            <div class="upgrade-info">
+                <div class="upg-icon">${icon}</div>
+                <div>
+                    <strong>${name} (Lvl ${lvl})</strong>
+                    <div class="sub-text">+${cfg.power_add} W/h | +${cfg.co2_improve}% CO2</div>
+                </div>
             </div>
             <button class="upgrade-btn" onclick="buyUpgrade('${key}')" ${userState.balance < price ? 'disabled' : ''}>
                 ${price} $GREEN
@@ -147,7 +166,7 @@ async function buyUpgrade(type) {
     }
 }
 
-// Tasks chiqarish va tekshirish
+// Topshiriqlar va obunani tekshirish
 function renderTasks(tasks, completedTasks) {
     const list = document.getElementById('tasks-list');
     list.innerHTML = '';
@@ -177,9 +196,10 @@ async function handleTaskClick(taskId) {
             window.open(channelUrl, '_blank');
         }
         
+        // Obunani tekshirish uchun 2.5 soniya kutish
         setTimeout(async () => {
             await completeTask(taskId);
-        }, 2000);
+        }, 2500);
     } else {
         await completeTask(taskId);
     }
@@ -204,23 +224,17 @@ async function completeTask(taskId) {
 
 // Stars do'koni
 async function buyStars(packType, starsCount) {
-    if (tg?.invoice) {
-        // Haqiqiy Telegram Stars Invoice
-        tg.showAlert(`Stars to'lov oynasi: ${starsCount} Stars`);
-    } else {
-        // Test uchun kreditlash
-        const res = await fetch('/api/stars/credit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ telegram_id: userData.telegram_id, pack_type: packType })
-        });
-        const data = await res.json();
-        if (data.success) {
-            userState.balance = data.new_balance;
-            userState.co2_level = data.new_co2;
-            updateUI();
-            if (tg?.showAlert) tg.showAlert("Boost muvaffaqiyatli xarid qilindi!");
-        }
+    const res = await fetch('/api/stars/credit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ telegram_id: userData.telegram_id, pack_type: packType })
+    });
+    const data = await res.json();
+    if (data.success) {
+        userState.balance = data.new_balance;
+        userState.co2_level = data.new_co2;
+        updateUI();
+        if (tg?.showAlert) tg.showAlert("Boost muvaffaqiyatli xarid qilindi!");
     }
 }
 
@@ -228,5 +242,5 @@ function closeModal() {
     document.getElementById('modal-offline').classList.add('hidden');
 }
 
-// App-ni ishga tushirish
+// Dasturni ishga tushirish
 initApp();
