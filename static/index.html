@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Eco-Miner Mini App</title>
+    <link rel="stylesheet" href="style.css">
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+</head>
+<body>
+    <div id="app">
+        <!-- Yuqori panel: Statik ma'lumotlar -->
+        <header class="stats-card">
+            <div class="stat-item">
+                <span class="label">Ekologik Balans</span>
+                <div class="value-box">
+                    <span id="balance">0.00</span> <span class="unit">$GREEN</span>
+                </div>
+            </div>
+            <div class="stat-group">
+                <div class="stat-sub">
+                    <span>Quvvat:</span>
+                    <strong id="energy-rate">1.0</strong> W/h
+                </div>
+                <div class="stat-sub">
+                    <span>CO2 Tozaligi:</span>
+                    <strong id="co2-level">100</strong>%
+                </div>
+            </div>
+        </header>
+
+        <!-- Asosiy Ekran: Mayning bosish zonasi -->
+        <main class="miner-zone">
+            <div id="tap-btn" class="eco-globe">
+                <div class="pulse-ring"></div>
+                <div class="globe-icon">🌱</div>
+            </div>
+            <p class="tap-hint">Eko-energiyani yig'ish uchun bosing!</p>
+        </main>
+
+        <!-- Upgradelar (Do'kon) Bo'limi -->
+        <section class="upgrades-container">
+            <h3>Yashil Texnologiyalar</h3>
+            <div id="upgrades-list" class="upgrades-grid">
+                <!-- JavaScript orqali dinamik yuklanadi -->
+            </div>
+        </section>
+    </div>
+
+    <!-- Modallar / Bildirishnomalar -->
+    <div id="modal-offline" class="modal hidden">
+        <div class="modal-content">
+            <h2>Siz yo'qligingizda!</h2>
+            <p>Stantsiyalaringiz pasiv rejimda <b id="offline-amount">0</b> $GREEN ishlab chiqardi.</p>
+
+            <button onclick="closeModal()">Yig'ib olish</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>
