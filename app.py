@@ -5,10 +5,8 @@ import os
 
 app = Flask(__name__, static_folder='static')
 
-# Baza jadvalini birinchi ishga tushirishda tekshirish
 init_db()
 
-# Upgradelar haqida boshlang'ich konfiguratsiya
 UPGRADES_CONFIG = {
     'solar': {'base_price': 10, 'power_add': 0.5, 'co2_improve': 2.0},
     'wind': {'base_price': 50, 'power_add': 3.0, 'co2_improve': 5.0},
@@ -16,12 +14,17 @@ UPGRADES_CONFIG = {
     'geothermal': {'base_price': 1000, 'power_add': 70.0, 'co2_improve': 25.0}
 }
 
-# Statik sahifani (Front-End) ko'rsatish
+# Statik vazifalar ro'yxati
+TASKS_CONFIG = [
+    {'id': 'sub_channel', 'title': 'Telegram kanalga obuna bo\'lish', 'reward': 500, 'icon': '📢'},
+    {'id': 'invite_3', 'title': '3 ta do\'stni taklif qilish', 'reward': 1500, 'icon': '👥'},
+    {'id': 'eco_clean', 'title': 'CO2 darajasini 100% ga yetkazish', 'reward': 300, 'icon': '🌍'}
+]
+
 @app.route('/')
 def index():
     return send_from_directory('static', 'index.html')
 
-# 1. Foydalanuvchini ro'yxatdan o'tkazish / Avtorizatsiya va pasiv daromad
 @app.route('/api/user/init', methods=['POST'])
 def init_user():
     data = request.json or {}
@@ -42,14 +45,12 @@ def init_user():
     current_time = int(time.time())
 
     if not user:
-        # Yangi foydalanuvchi yaratish
         cursor.execute('''
             INSERT INTO users (telegram_id, username, first_name, balance, energy_rate, co2_level, last_active, referrer_id)
             VALUES (?, ?, ?, 50.0, 1.0, 50.0, ?, ?)
         ''', (telegram_id, username, first_name, current_time, referrer_id))
         conn.commit()
 
-        # Garov/Referral bonus
         if referrer_id and str(referrer_id) != str(telegram_id):
             cursor.execute("UPDATE users SET balance = balance + 100.0 WHERE telegram_id = ?", (referrer_id,))
             cursor.execute("UPDATE users SET balance = balance + 50.0 WHERE telegram_id = ?", (telegram_id,))
@@ -59,11 +60,10 @@ def init_user():
         user = cursor.fetchone()
         offline_income = 0
     else:
-        # Pasiv daromadni hisoblash (Sekundiga energy_rate, max 3 soat = 10800 sek)
         last_active = user['last_active'] or current_time
         time_passed = min(current_time - last_active, 10800)
         
-        if time_passed > 5:  # kamida 5 soniya o'tgan bo'lsa
+        if time_passed > 5:
             offline_income = round((time_passed / 3600) * user['energy_rate'] * (user['co2_level'] / 100), 2)
             new_balance = user['balance'] + offline_income
             cursor.execute("UPDATE users SET balance = ?, last_active = ? WHERE telegram_id = ?", 
@@ -72,9 +72,12 @@ def init_user():
         else:
             offline_income = 0
 
-    # User upgradelarini olish
     cursor.execute("SELECT upgrade_type, level FROM user_upgrades WHERE user_id = ?", (telegram_id,))
     upgrades = {row['upgrade_type']: row['level'] for row in cursor.fetchall()}
+
+    # Bajarilgan tasklarni olish
+    cursor.execute("SELECT task_id FROM user_tasks WHERE user_id = ?", (telegram_id,))
+    completed_tasks = [row['task_id'] for row in cursor.fetchall()]
 
     cursor.execute("SELECT * FROM users WHERE telegram_id = ?", (telegram_id,))
     user_data = cursor.fetchone()
@@ -84,24 +87,22 @@ def init_user():
         'user': dict(user_data),
         'upgrades': upgrades,
         'offline_income': offline_income,
-        'upgrades_config': UPGRADES_CONFIG
+        'upgrades_config': UPGRADES_CONFIG,
+        'tasks': TASKS_CONFIG,
+        'completed_tasks': completed_tasks
     })
 
-# 2. Tap (Bosish) orqali balans oshirish
 @app.route('/api/tap', methods=['POST'])
 def tap():
     data = request.json or {}
     telegram_id = data.get('telegram_id')
     taps = data.get('taps', 1)
 
-    # Anticheat: Bir so'rovda 50 tadan ko'p tap berilmasligi kerak
     if taps > 50 or taps < 1:
         return jsonify({'error': 'Noto\'g\'ri taplar soni'}), 400
 
     conn = get_db_connection()
     cursor = conn.cursor()
-    
-    # Har bir tap uchun 1.0 GREEN * CO2 faktori
     cursor.execute("SELECT balance, co2_level FROM users WHERE telegram_id = ?", (telegram_id,))
     user = cursor.fetchone()
     
@@ -120,7 +121,6 @@ def tap():
 
     return jsonify({'new_balance': new_balance, 'earned': earned})
 
-# 3. Qurilmani (Upgrade) sotib olish
 @app.route('/api/upgrade', methods=['POST'])
 def buy_upgrade():
     data = request.json or {}
@@ -132,7 +132,6 @@ def buy_upgrade():
 
     conn = get_db_connection()
     cursor = conn.cursor()
-
     cursor.execute("SELECT * FROM users WHERE telegram_id = ?", (telegram_id,))
     user = cursor.fetchone()
 
@@ -161,7 +160,7 @@ def buy_upgrade():
                        (telegram_id, upgrade_type, new_level))
     else:
         cursor.execute("UPDATE user_upgrades SET level = ? WHERE user_id = ? AND upgrade_type = ?", 
-                       (new_level, telegram_id, upgrade_type))
+                       (new_level, upgrade_type, new_level))
 
     conn.commit()
     conn.close()
@@ -174,6 +173,55 @@ def buy_upgrade():
         'upgrade_type': upgrade_type,
         'new_level': new_level
     })
+
+# 4. Vazifani bajarish APIsi
+@app.route('/api/tasks/complete', methods=['POST'])
+def complete_task():
+    data = request.json or {}
+    telegram_id = data.get('telegram_id')
+    task_id = data.get('task_id')
+
+    task = next((t for t in TASKS_CONFIG if t['id'] == task_id), None)
+    if not task:
+        return jsonify({'error': 'Vazifa topilmadi'}), 400
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    try:
+        cursor.execute("INSERT INTO user_tasks (user_id, task_id) VALUES (?, ?)", (telegram_id, task_id))
+        cursor.execute("UPDATE users SET balance = balance + ? WHERE telegram_id = ?", (task['reward'], telegram_id))
+        conn.commit()
+        
+        cursor.execute("SELECT balance FROM users WHERE telegram_id = ?", (telegram_id,))
+        new_balance = cursor.fetchone()['balance']
+        conn.close()
+        
+        return jsonify({'success': True, 'reward': task['reward'], 'new_balance': new_balance})
+    except sqlite3.IntegrityError:
+        conn.close()
+        return jsonify({'error': 'Vazifa allaqachon bajarilgan'}), 400
+
+# 5. Telegram Stars mukofotini berish (To'lovdan so'ng)
+@app.route('/api/stars/credit', methods=['POST'])
+def credit_stars():
+    data = request.json or {}
+    telegram_id = data.get('telegram_id')
+    pack_type = data.get('pack_type') # 'boost_10' / 'boost_50'
+
+    conn = get_db_connection()
+    cursor = conn.cursor()
+
+    bonus_balance = 2000.0 if pack_type == 'boost_10' else 12000.0
+    cursor.execute("UPDATE users SET balance = balance + ?, co2_level = 100.0 WHERE telegram_id = ?", 
+                   (bonus_balance, telegram_id))
+    conn.commit()
+
+    cursor.execute("SELECT balance, co2_level FROM users WHERE telegram_id = ?", (telegram_id,))
+    user = cursor.fetchone()
+    conn.close()
+
+    return jsonify({'success': True, 'new_balance': user['balance'], 'new_co2': user['co2_level']})
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
