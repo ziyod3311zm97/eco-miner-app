@@ -16,7 +16,6 @@ tg.expand();
 // ============================================
 // STATE
 // ============================================
-let userData = null;
 let balance = 0;
 let energyRate = 1.0;
 let co2Level = 50;
@@ -24,10 +23,8 @@ let level = 1;
 let totalMines = 0;
 let energy = 400;
 const MAX_ENERGY = 400;
-let upgradesConfig = {};
 let pendingTaps = 0;
 let tapTimeout = null;
-let isMining = false;
 
 const user = tg.initDataUnsafe?.user || {
     id: 'demo',
@@ -38,6 +35,7 @@ const user = tg.initDataUnsafe?.user || {
 // ============================================
 // DOM ELEMENTS
 // ============================================
+const tapBtn = document.getElementById('tapBtn');
 const balanceEl = document.getElementById('coinBalance');
 const levelEl = document.getElementById('levelDisplay');
 const energyRateEl = document.getElementById('energyRate');
@@ -46,8 +44,12 @@ const totalMinesEl = document.getElementById('totalMines');
 const energyLeftEl = document.getElementById('energyLeft');
 const energyDisplayEl = document.getElementById('energyDisplay');
 const progressBar = document.getElementById('progressBar');
-const tapBtn = document.getElementById('tapBtn');
 const earnPerTapEl = document.getElementById('earnPerTap');
+
+// ============================================
+// CHECK - tapBtn mavjudmi?
+// ============================================
+console.log('tapBtn:', tapBtn);  // Debug uchun
 
 // ============================================
 // INIT
@@ -64,15 +66,14 @@ async function initApp() {
             })
         });
         const data = await res.json();
+        console.log('Init data:', data);  // Debug uchun
         
         if (data.user) {
-            userData = data.user;
             balance = data.user.balance || 0;
             energyRate = data.user.energy_rate || 1.0;
             co2Level = data.user.co2_level || 50;
             level = data.user.level || 1;
             totalMines = data.user.total_mines || 0;
-            upgradesConfig = data.upgrades_config || {};
             
             document.getElementById('playerName').innerText = data.user.first_name || user.first_name;
             
@@ -81,7 +82,6 @@ async function initApp() {
             renderTasks(data.tasks, data.completed_tasks);
             loadLeaderboard();
             
-            // Offline income
             if (data.offline_income > 0) {
                 document.getElementById('offlineAmount').innerText = data.offline_income.toFixed(2);
                 document.getElementById('offlineModal').classList.remove('hidden');
@@ -96,84 +96,91 @@ async function initApp() {
 // UI UPDATE
 // ============================================
 function updateUI() {
-    balanceEl.innerText = balance.toFixed(2);
-    levelEl.innerText = level;
-    energyRateEl.innerText = energyRate.toFixed(1);
-    co2El.innerText = Math.round(co2Level) + '%';
-    totalMinesEl.innerText = totalMines;
-    energyLeftEl.innerText = Math.round(energy);
-    energyDisplayEl.innerText = Math.round(energy);
+    if (balanceEl) balanceEl.innerText = balance.toFixed(2);
+    if (levelEl) levelEl.innerText = level;
+    if (energyRateEl) energyRateEl.innerText = energyRate.toFixed(1);
+    if (co2El) co2El.innerText = Math.round(co2Level) + '%';
+    if (totalMinesEl) totalMinesEl.innerText = totalMines;
+    if (energyLeftEl) energyLeftEl.innerText = Math.round(energy);
+    if (energyDisplayEl) energyDisplayEl.innerText = Math.round(energy);
     
-    const progress = (energy / MAX_ENERGY) * 100;
-    progressBar.style.width = progress + '%';
+    if (progressBar) {
+        const progress = (energy / MAX_ENERGY) * 100;
+        progressBar.style.width = progress + '%';
+    }
     
-    const earnPerTap = 1.0 * (co2Level / 100);
-    earnPerTapEl.innerText = earnPerTap.toFixed(2);
+    if (earnPerTapEl) {
+        const earnPerTap = 1.0 * (co2Level / 100);
+        earnPerTapEl.innerText = earnPerTap.toFixed(2);
+    }
 }
 
 // ============================================
-// TAP / MINE
+// TAP / MINE - ✅ TO'G'RI
 // ============================================
-tapBtn.addEventListener('click', (e) => {
-    if (energy <= 0) {
-        tg.showAlert('⚡ Energiyangiz tugadi! Boosting kuting.');
-        return;
-    }
-    
-    energy -= 1;
-    const earnPerTap = 1.0 * (co2Level / 100);
-    const earned = earnPerTap;
-    balance += earned;
-    totalMines += 1;
-    pendingTaps++;
-    
-    // Level check (har 100 ta mine)
-    const newLevel = 1 + Math.floor(totalMines / 100);
-    if (newLevel > level) {
-        level = newLevel;
-        tg.HapticFeedback?.notificationOccurred('success');
-    }
-    
-    updateUI();
-    showFloatingText(e, `+${earned.toFixed(2)} 🌶️`);
-    
-    // Energy regeneration
-    if (energy <= 0) {
-        setTimeout(() => {
-            energy = Math.min(MAX_ENERGY, energy + 10);
-            updateUI();
-        }, 5000);
-    }
-    
-    clearTimeout(tapTimeout);
-    tapTimeout = setTimeout(sendTaps, 800);
-});
+if (tapBtn) {
+    tapBtn.addEventListener('click', function(e) {
+        console.log('Tap clicked!');  // Debug uchun
+        
+        if (energy <= 0) {
+            tg.showAlert('⚡ Energiyangiz tugadi! Boosting kuting.');
+            return;
+        }
+        
+        energy -= 1;
+        const earnPerTap = 1.0 * (co2Level / 100);
+        const earned = earnPerTap;
+        balance += earned;
+        totalMines += 1;
+        pendingTaps++;
+        
+        const newLevel = 1 + Math.floor(totalMines / 100);
+        if (newLevel > level) {
+            level = newLevel;
+            tg.HapticFeedback?.notificationOccurred('success');
+        }
+        
+        updateUI();
+        showFloatingText(e, `+${earned.toFixed(2)} 🌶️`);
+        
+        if (energy <= 0) {
+            setTimeout(() => {
+                energy = Math.min(MAX_ENERGY, energy + 10);
+                updateUI();
+            }, 5000);
+        }
+        
+        clearTimeout(tapTimeout);
+        tapTimeout = setTimeout(sendTaps, 800);
+    });
+} else {
+    console.error('tapBtn topilmadi! HTML da id="tapBtn" borligini tekshiring.');
+}
 
+// ============================================
+// SHOW FLOATING TEXT - ✅ TO'G'RI
+// ============================================
 function showFloatingText(e, text) {
     const el = document.createElement('div');
     el.className = 'floating-number';
     el.innerText = text;
-    el.style.cssText = `
-        position: fixed;
-        color: #4ade80;
-        font-weight: 900;
-        font-size: 24px;
-        pointer-events: none;
-        z-index: 999;
-        text-shadow: 0 0 20px rgba(74, 222, 128, 0.6);
-        animation: floatUp 0.8s ease-out forwards;
-    `;
     
-    const rect = tapBtn.getBoundingClientRect();
-    el.style.left = (rect.left + rect.width / 2 - 40) + 'px';
-    el.style.top = (rect.top - 20) + 'px';
+    const rect = tapBtn?.getBoundingClientRect();
+    if (rect) {
+        el.style.left = (rect.left + rect.width / 2 - 30) + 'px';
+        el.style.top = (rect.top - 20) + 'px';
+    } else {
+        el.style.left = '50%';
+        el.style.top = '50%';
+        el.style.transform = 'translate(-50%, -50%)';
+    }
     
     document.body.appendChild(el);
-    setTimeout(() => el.remove(), 800);
+    setTimeout(() => el.remove(), 900);
 }
 
 // ============================================
-// SEND TAPS TO SERVER
+// SEND TAPS
 // ============================================
 async function sendTaps() {
     if (pendingTaps === 0) return;
@@ -218,19 +225,24 @@ function renderUpgrades(userUpgrades) {
     if (!list) return;
     list.innerHTML = '';
     
+    const upgradesConfig = {
+        'solar': { base_price: 10, power_add: 0.5, co2_improve: 2.0, icon: '☀️', name: 'Quyosh Paneli' },
+        'wind': { base_price: 50, power_add: 3.0, co2_improve: 5.0, icon: '🌬️', name: 'Shamol Generator' },
+        'hydro': { base_price: 250, power_add: 15.0, co2_improve: 12.0, icon: '🌊', name: 'Gidro Stansiya' },
+        'geothermal': { base_price: 1000, power_add: 70.0, co2_improve: 25.0, icon: '⚛️', name: 'Geotermal' }
+    };
+    
     for (const [key, cfg] of Object.entries(upgradesConfig)) {
         const lvl = userUpgrades?.[key] || 0;
         const price = (cfg.base_price * Math.pow(1.5, lvl)).toFixed(2);
-        const icon = cfg.icon || '⚡';
-        const name = cfg.name || key;
         
         const div = document.createElement('div');
         div.className = 'upgrade-item';
         div.innerHTML = `
             <div class="upgrade-info">
-                <span class="upgrade-icon">${icon}</span>
+                <span class="upgrade-icon">${cfg.icon}</span>
                 <div>
-                    <div class="upgrade-name">${name} (Lvl ${lvl})</div>
+                    <div class="upgrade-name">${cfg.name} (Lvl ${lvl})</div>
                     <div class="upgrade-desc">+${cfg.power_add} quvvat | +${cfg.co2_improve}% CO2</div>
                 </div>
             </div>
@@ -276,13 +288,22 @@ function renderTasks(tasks, completedTasks) {
     if (!list) return;
     list.innerHTML = '';
     
-    tasks.forEach(task => {
+    const defaultTasks = [
+        { id: 'sub_channel', title: 'Telegram kanalga obuna bo\'lish', reward: 500, icon: '📢' },
+        { id: 'eco_clean', title: 'CO2 darajasini 100% ga yetkazish', reward: 300, icon: '🌍' },
+        { id: 'mine_100', title: '100 marta qazib olish', reward: 1000, icon: '⛏️' },
+        { id: 'level_5', title: '5-darajaga chiqish', reward: 2000, icon: '⭐' }
+    ];
+    
+    const tasksList = tasks || defaultTasks;
+    
+    tasksList.forEach(task => {
         const isDone = completedTasks?.includes(task.id) || false;
         const div = document.createElement('div');
         div.className = 'task-item';
         div.innerHTML = `
             <div class="task-info">
-                <span class="task-icon">${task.icon}</span>
+                <span class="task-icon">${task.icon || '📌'}</span>
                 <div>
                     <div class="task-title">${task.title}</div>
                     <div class="task-reward">+${task.reward} 🌶️</div>
@@ -362,14 +383,32 @@ async function loadLeaderboard() {
 }
 
 // ============================================
+// ESCAPE HTML - ✅ QO'SHILDI
+// ============================================
+function escapeHtml(str) {
+    if (!str) return '';
+    return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
+// ============================================
 // SECTIONS
 // ============================================
 function showSection(section) {
     document.querySelectorAll('.section').forEach(el => el.classList.remove('active'));
-    document.getElementById('section' + section.charAt(0).toUpperCase() + section.slice(1))?.classList.add('active');
+    const target = document.getElementById('section' + section.charAt(0).toUpperCase() + section.slice(1));
+    if (target) target.classList.add('active');
     
     document.querySelectorAll('.menu-item').forEach(el => el.classList.remove('active'));
-    document.querySelector(`.menu-item[onclick*="${section}"]`)?.classList.add('active');
+    document.querySelectorAll('.menu-item').forEach(el => {
+        if (el.textContent.toLowerCase().includes(section)) {
+            el.classList.add('active');
+        }
+    });
 }
 
 // ============================================
@@ -394,7 +433,7 @@ function becomeFounder() {
     }
     balance -= 500;
     updateUI();
-    tg.showAlert('👑 Tabriklaymiz! Siz Qalampir asoschisi bo\'ldingiz! Maxsus imtiyozlar sizni kutmoqda!');
+    tg.showAlert('👑 Tabriklaymiz! Siz Qalampir asoschisi bo\'ldingiz!');
     tg.HapticFeedback?.notificationOccurred('success');
     sendTaps();
 }
@@ -409,7 +448,7 @@ function shareGame() {
         return;
     }
     const link = `https://t.me/${botUsername}?start=ref_${user.id}`;
-    const text = '🌶️ Qalampir Miner-ga qo\'shil!\n\n⛏️ Qazib olishni boshlang va ko\'plab mukofotlarga ega bo\'ling!\n\n👇 Boshlash';
+    const text = '🌶️ Qalampir Miner-ga qo\'shil!\n\n⛏️ Qazib olishni boshlang!';
     tg.openTelegramLink('https://t.me/share/url?url=' + encodeURIComponent(link) + '&text=' + encodeURIComponent(text));
 }
 
@@ -418,13 +457,6 @@ function shareGame() {
 // ============================================
 function closeOfflineModal() {
     document.getElementById('offlineModal').classList.add('hidden');
-}
-
-// ============================================
-// HELPERS
-// ============================================
-function escapeHtml(v) {
-    return String(v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 }
 
 // ============================================
@@ -445,18 +477,6 @@ initApp();
 // Telegram Main Button
 try {
     tg.MainButton?.setText('⛏️ QAZIB OLISH').show().onClick(() => {
-        tapBtn.click();
+        if (tapBtn) tapBtn.click();
     });
 } catch (e) {}
-
-// ============================================
-// FLOATING ANIMATION STYLE
-// ============================================
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes floatUp {
-        0% { opacity: 1; transform: translateY(0) scale(1); }
-        100% { opacity: 0; transform: translateY(-80px) scale(1.2); }
-    }
-`;
-document.head.appendChild(style);
