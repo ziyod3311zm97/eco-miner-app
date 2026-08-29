@@ -9,23 +9,30 @@
 </head>
 <body>
 
+<!-- ===== 3D GLOW ORBS ===== -->
+<div class="glow-orb glow-orb-1"></div>
+<div class="glow-orb glow-orb-2"></div>
+<div class="glow-orb glow-orb-3"></div>
+
 <div class="app">
     <!-- ===== TOPBAR ===== -->
     <header class="topbar">
         <div class="profile">
-            <div class="avatar" id="avatar">🌶️</div>
+            <div class="avatar" id="avatar">
+                🌶️
+                <div class="avatar-ring"></div>
+            </div>
             <div>
                 <div class="name" id="playerName">O'yinchi</div>
                 <div class="level">🏆 LVL <span id="levelDisplay">1</span></div>
             </div>
         </div>
         <div class="balance">
-            <span class="icon">🪙</span>
-            <span id="coinBalance">0</span>
+            🪙 <span id="coinBalance">0</span>
         </div>
     </header>
 
-    <!-- ===== HERO / STATS ===== -->
+    <!-- ===== HERO ===== -->
     <section class="hero">
         <div class="stats-grid">
             <div class="stat-item">
@@ -34,7 +41,7 @@
             </div>
             <div class="stat-item">
                 <span class="stat-label">🌿 CO2</span>
-                <span class="stat-value" id="co2Level">50%</span>
+                <span class="stat-value co2" id="co2Level">50%</span>
             </div>
             <div class="stat-item">
                 <span class="stat-label">⛏️ Qazilgan</span>
@@ -43,14 +50,14 @@
         </div>
     </section>
 
-    <!-- ===== MAIN MINE BUTTON ===== -->
+    <!-- ===== MINE BUTTON ===== -->
     <div class="mine-zone">
-        <div id="tapBtn" class="mine-btn">
-            <div class="mine-icon">⛏️</div>
-            <div class="mine-label">+1 Tap to Mine</div>
-        </div>
+        <button id="tapBtn" class="mine-btn">
+            <span class="icon">⛏️</span>
+            <span class="label">+1 Tap to Mine</span>
+        </button>
         <div class="mine-progress">
-            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+            <div class="progress-bar" id="progressBar" style="width: 100%"></div>
         </div>
         <div class="mine-info">
             <span>⚡ <span id="energyLeft">400</span> / 400</span>
@@ -59,8 +66,8 @@
     </div>
 
     <!-- ===== MENU ===== -->
-    <div class="menu-grid">
-        <button class="menu-item" onclick="showSection('mine')">
+    <nav class="menu-grid">
+        <button class="menu-item active" onclick="showSection('mine')">
             <span class="menu-icon">⛏️</span>
             <span class="menu-label">Mine</span>
         </button>
@@ -80,7 +87,7 @@
             <span class="menu-icon">👑</span>
             <span class="menu-label">Founder</span>
         </button>
-    </div>
+    </nav>
 
     <!-- ===== SECTIONS ===== -->
     <div id="sectionMine" class="section active">
