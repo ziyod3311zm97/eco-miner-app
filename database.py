@@ -1,10 +1,10 @@
 import sqlite3
 import os
 
-DB_FILE = os.environ.get("DATABASE_URL", "eco_miner.db")
+DB_FILE = "eco_miner.db"
 
 def get_db_connection():
-    conn = sqlite3.connect("eco_miner.db")
+    conn = sqlite3.connect(DB_FILE)
     conn.row_factory = sqlite3.Row
     return conn
 
@@ -12,22 +12,24 @@ def init_db():
     conn = get_db_connection()
     cursor = conn.cursor()
     
-    # 1. Foydalanuvchilar jadvali
+    # Foydalanuvchilar
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS users (
-            user_id INTEGER PRIMARY KEY,
+            user_id INTEGER PRIMARY KEY AUTOINCREMENT,
             telegram_id BIGINT UNIQUE NOT NULL,
             username TEXT,
             first_name TEXT,
-            balance REAL DEFAULT 0.0,
+            balance REAL DEFAULT 50.0,
             energy_rate REAL DEFAULT 1.0,
-            co2_level REAL DEFAULT 100.0,
-            last_active TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+            co2_level REAL DEFAULT 50.0,
+            level INTEGER DEFAULT 1,
+            total_mines INTEGER DEFAULT 0,
+            last_active INTEGER DEFAULT 0,
             referrer_id BIGINT DEFAULT NULL
         )
     ''')
 
-    # 2. Upgradelar jadvali
+    # Upgradelar
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS user_upgrades (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -38,7 +40,7 @@ def init_db():
         )
     ''')
 
-    # 3. Bajarilgan vazifalar jadvali
+    # Bajarilgan vazifalar
     cursor.execute('''
         CREATE TABLE IF NOT EXISTS user_tasks (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -51,7 +53,7 @@ def init_db():
 
     conn.commit()
     conn.close()
+    print("Ma'lumotlar bazasi muvaffaqiyatli yaratildi!")
 
 if __name__ == "__main__":
     init_db()
-    print("Ma'lumotlar bazasi muvaffaqiyatli yangilandi!")
