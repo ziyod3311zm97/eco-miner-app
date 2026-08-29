@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Qalampir Miner 🌶️</title>
-    <link rel="stylesheet" href="style.css">
+    <!-- ✅ CSS ni static papkadan o'qiydi -->
+    <link rel="stylesheet" href="/static/style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
@@ -52,10 +53,10 @@
 
     <!-- ===== MINE BUTTON ===== -->
     <div class="mine-zone">
-        <button id="tapBtn" class="mine-btn">
+        <div id="tapBtn" class="mine-btn">
             <span class="icon">⛏️</span>
             <span class="label">+1 Tap to Mine</span>
-        </button>
+        </div>
         <div class="mine-progress">
             <div class="progress-bar" id="progressBar" style="width: 100%"></div>
         </div>
@@ -157,6 +158,7 @@
     </div>
 </div>
 
-<script src="script.js"></script>
+<!-- ✅ JS ni static papkadan o'qiydi -->
+<script src="/static/script.js"></script>
 </body>
 </html>
