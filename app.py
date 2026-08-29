@@ -6,7 +6,8 @@ import time
 import os
 import random
 
-app = Flask(__name__, static_folder='.', static_url_path='/')
+# ✅ TO'G'RI - static papkasini ishlatish
+app = Flask(__name__, static_folder='static', static_url_path='/static')
 
 # Ma'lumotlar bazasini ishga tushirish
 init_db()
@@ -20,14 +21,12 @@ UPGRADES_CONFIG = {
     'solar': {'base_price': 10, 'power_add': 0.5, 'co2_improve': 2.0, 'name': '☀️ Quyosh Paneli', 'icon': '☀️'},
     'wind': {'base_price': 50, 'power_add': 3.0, 'co2_improve': 5.0, 'name': '🌬️ Shamol Generator', 'icon': '🌬️'},
     'hydro': {'base_price': 250, 'power_add': 15.0, 'co2_improve': 12.0, 'name': '🌊 Gidro Stansiya', 'icon': '🌊'},
-    'geothermal': {'base_price': 1000, 'power_add': 70.0, 'co2_improve': 25.0, 'name': '⚛️ Geotermal', 'icon': '⚛️'},
-    'nuclear': {'base_price': 5000, 'power_add': 200.0, 'co2_improve': 50.0, 'name': '☢️ Yadro Stansiya', 'icon': '☢️'}
+    'geothermal': {'base_price': 1000, 'power_add': 70.0, 'co2_improve': 25.0, 'name': '⚛️ Geotermal', 'icon': '⚛️'}
 }
 
 # Topshiriqlar
 TASKS_CONFIG = [
     {'id': 'sub_channel', 'title': 'Telegram kanalga obuna bo\'lish', 'reward': 500, 'icon': '📢'},
-    {'id': 'invite_3', 'title': '3 ta do\'stni taklif qilish', 'reward': 1500, 'icon': '👥'},
     {'id': 'eco_clean', 'title': 'CO2 darajasini 100% ga yetkazish', 'reward': 300, 'icon': '🌍'},
     {'id': 'mine_100', 'title': '100 marta qazib olish', 'reward': 1000, 'icon': '⛏️'},
     {'id': 'level_5', 'title': '5-darajaga chiqish', 'reward': 2000, 'icon': '⭐'}
@@ -47,15 +46,26 @@ def check_telegram_subscription(user_id):
         print(f"Obunani tekshirishda xatolik: {e}")
     return False
 
+# ============================================
+# ROUTES
+# ============================================
+
 @app.route('/')
 def index():
     return send_from_directory('.', 'index.html')
 
 @app.route('/<path:path>')
-def serve_static(path):
+def serve_static_files(path):
+    """Barcha fayllarni servis qilish"""
+    # 1. Asosiy papkadan faylni izlash
     if os.path.exists(os.path.join('.', path)):
         return send_from_directory('.', path)
-    return send_from_directory('.', 'index.html')
+    # 2. Static papkasidan izlash
+    elif os.path.exists(os.path.join('static', path)):
+        return send_from_directory('static', path)
+    # 3. Topilmasa index.html ni qaytarish
+    else:
+        return send_from_directory('.', 'index.html')
 
 @app.route('/api/user/init', methods=['POST'])
 def init_user():
@@ -77,14 +87,12 @@ def init_user():
     current_time = int(time.time())
 
     if not user:
-        # Yangi foydalanuvchi
         cursor.execute('''
             INSERT INTO users (telegram_id, username, first_name, balance, energy_rate, co2_level, level, total_mines, last_active, referrer_id)
             VALUES (?, ?, ?, 50.0, 1.0, 50.0, 1, 0, ?, ?)
         ''', (telegram_id, username, first_name, current_time, referrer_id))
         conn.commit()
 
-        # Referral bonus
         if referrer_id and str(referrer_id) != str(telegram_id):
             cursor.execute("UPDATE users SET balance = balance + 100.0 WHERE telegram_id = ?", (referrer_id,))
             cursor.execute("UPDATE users SET balance = balance + 50.0 WHERE telegram_id = ?", (telegram_id,))
@@ -95,7 +103,7 @@ def init_user():
         offline_income = 0
     else:
         last_active = user['last_active'] or current_time
-        time_passed = min(current_time - last_active, 10800)  # Maks 3 soat
+        time_passed = min(current_time - last_active, 10800)
         
         if time_passed > 5:
             offline_income = round((time_passed / 3600) * user['energy_rate'] * (user['co2_level'] / 100), 2)
@@ -143,13 +151,10 @@ def tap():
         conn.close()
         return jsonify({'error': 'Foydalanuvchi topilmadi'}), 404
 
-    # Har bir tap uchun bonus
     base_earn = 1.0 * (user['co2_level'] / 100)
     earned = round(taps * base_earn, 2)
     new_balance = user['balance'] + earned
     new_total_mines = user['total_mines'] + taps
-    
-    # Level hisoblash (har 100 ta mine uchun 1 level)
     new_level = 1 + (new_total_mines // 100)
     
     current_time = int(time.time())
@@ -232,7 +237,6 @@ def complete_task():
     conn = get_db_connection()
     cursor = conn.cursor()
 
-    # Vazifa shartlarini tekshirish
     if task_id == 'sub_channel':
         if not check_telegram_subscription(telegram_id):
             conn.close()
@@ -269,29 +273,9 @@ def complete_task():
         conn.close()
         
         return jsonify({'success': True, 'reward': task['reward'], 'new_balance': new_balance})
-    except Exception:
+    except Exception as e:
         conn.close()
         return jsonify({'error': 'Vazifa allaqachon bajarilgan'}), 400
-
-@app.route('/api/stars/credit', methods=['POST'])
-def credit_stars():
-    data = request.json or {}
-    telegram_id = data.get('telegram_id')
-    pack_type = data.get('pack_type')
-
-    conn = get_db_connection()
-    cursor = conn.cursor()
-
-    bonus_balance = 2000.0 if pack_type == 'boost_10' else 12000.0
-    cursor.execute("UPDATE users SET balance = balance + ?, co2_level = 100.0 WHERE telegram_id = ?", 
-                   (bonus_balance, telegram_id))
-    conn.commit()
-
-    cursor.execute("SELECT balance, co2_level FROM users WHERE telegram_id = ?", (telegram_id,))
-    user = cursor.fetchone()
-    conn.close()
-
-    return jsonify({'success': True, 'new_balance': user['balance'], 'new_co2': user['co2_level']})
 
 @app.route('/api/leaderboard', methods=['GET'])
 def get_leaderboard():
