@@ -2,110 +2,154 @@
 <html lang="uz">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Qalampir Miner - Eco Station</title>
-    <link rel="stylesheet" href="/static/style.css?v=11">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Qalampir Miner 🌶️</title>
+    <link rel="stylesheet" href="style.css">
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
 </head>
 <body>
-    <div id="app">
-        <!-- Yuqori Asosiy Balans -->
-        <header class="stats-card">
+
+<div class="app">
+    <!-- ===== TOPBAR ===== -->
+    <header class="topbar">
+        <div class="profile">
+            <div class="avatar" id="avatar">🌶️</div>
+            <div>
+                <div class="name" id="playerName">O'yinchi</div>
+                <div class="level">🏆 LVL <span id="levelDisplay">1</span></div>
+            </div>
+        </div>
+        <div class="balance">
+            <span class="icon">🪙</span>
+            <span id="coinBalance">0</span>
+        </div>
+    </header>
+
+    <!-- ===== HERO / STATS ===== -->
+    <section class="hero">
+        <div class="stats-grid">
             <div class="stat-item">
-                <span class="label">Ekologik Balans</span>
-                <div class="value-box">
-                    <span id="balance">0.00</span> <span class="unit">$GREEN</span>
-                </div>
+                <span class="stat-label">⚡ Quvvat</span>
+                <span class="stat-value" id="energyRate">1.0</span>
             </div>
-            <div class="stat-group">
-                <div class="stat-sub">⚡ Quvvat: <strong id="energy-rate">1.0</strong> W/h</div>
-                <div class="stat-sub">🌿 CO2 Sofligi: <strong id="co2-level">100</strong>%</div>
+            <div class="stat-item">
+                <span class="stat-label">🌿 CO2</span>
+                <span class="stat-value" id="co2Level">50%</span>
             </div>
-        </header>
-
-        <!-- Jonli Ishlayotgan Stansiyalar Maydoni -->
-        <section class="section-container eco-station-hub">
-            <div class="hub-title">🌐 Ishlayotgan Eco Stansiyalar</div>
-            <div class="stations-visual-grid">
-                <!-- Quyosh Paneli -->
-                <div class="station-visual-card solar-card" id="vis-solar">
-                    <div class="sun-glow"></div>
-                    <div class="solar-panel-icon">☀️ ⚡</div>
-                    <span class="st-name">Quyosh Paneli</span>
-                </div>
-                <!-- Shamol Generatori -->
-                <div class="station-visual-card wind-card" id="vis-wind">
-                    <div class="wind-turbine">
-                        <div class="turbine-blade"></div>
-                        <div class="turbine-blade blade-2"></div>
-                        <div class="turbine-blade blade-3"></div>
-                        <div class="turbine-pole"></div>
-                    </div>
-                    <span class="st-name">Shamol Generatori</span>
-                </div>
-                <!-- Atom / Yadro Stansiyasi -->
-                <div class="station-visual-card atom-card" id="vis-hydro">
-                    <div class="atom-core">
-                        <div class="orbit orbit-1"></div>
-                        <div class="orbit orbit-2"></div>
-                        <div class="nucleus">⚛️</div>
-                    </div>
-                    <span class="st-name">Atom/Eko Stansiya</span>
-                </div>
+            <div class="stat-item">
+                <span class="stat-label">⛏️ Qazilgan</span>
+                <span class="stat-value" id="totalMines">0</span>
             </div>
-        </section>
+        </div>
+    </section>
 
-        <!-- Asosiy Tap / Miner Zonalari -->
-        <main class="miner-zone">
-            <div id="tap-btn" class="eco-globe">
-                <div class="globe-icon">🌱</div>
-            </div>
-            <p class="tap-hint">Eko-energiyani yig'ish uchun bosing!</p>
-        </main>
-
-        <!-- Telegram Stars Do'koni -->
-        <section class="section-container">
-            <h3>⭐ Telegram Stars Do'koni</h3>
-            <div class="stars-grid">
-                <div class="stars-card">
-                    <div>
-                        <strong>Kichik Eko-Boost</strong>
-                        <div class="sub-text">+2,000 $GREEN & CO2 100%</div>
-                    </div>
-                    <button class="stars-btn" onclick="buyStars('boost_10', 10)">⭐ 10 Stars</button>
-                </div>
-                <div class="stars-card">
-                    <div>
-                        <strong>Katta Eko-Boost</strong>
-                        <div class="sub-text">+12,000 $GREEN & CO2 100%</div>
-                    </div>
-                    <button class="stars-btn" onclick="buyStars('boost_50', 50)">⭐ 50 Stars</button>
-                </div>
-            </div>
-        </section>
-
-        <!-- Topshiriqlar -->
-        <section class="section-container">
-            <h3>📋 Topshiriqlar va Mukofotlar</h3>
-            <div id="tasks-list" class="upgrades-grid"></div>
-        </section>
-
-        <!-- Yashil Texnologiyalar (Upgrades) -->
-        <section class="section-container">
-            <h3>⚡ Yashil Texnologiyalarni Yaxshilash</h3>
-            <div id="upgrades-list" class="upgrades-grid"></div>
-        </section>
-    </div>
-
-    <!-- Modal -->
-    <div id="modal-offline" class="modal hidden">
-        <div class="modal-content">
-            <h2>Siz yo'qligingizda!</h2>
-            <p>Stantsiyalaringiz <b id="offline-amount">0</b> $GREEN ishlab chiqardi.</p>
-            <button onclick="closeModal()">Yig'ib olish</button>
+    <!-- ===== MAIN MINE BUTTON ===== -->
+    <div class="mine-zone">
+        <div id="tapBtn" class="mine-btn">
+            <div class="mine-icon">⛏️</div>
+            <div class="mine-label">+1 Tap to Mine</div>
+        </div>
+        <div class="mine-progress">
+            <div class="progress-bar" id="progressBar" style="width: 0%"></div>
+        </div>
+        <div class="mine-info">
+            <span>⚡ <span id="energyLeft">400</span> / 400</span>
+            <button class="boost-btn" onclick="boostEnergy()">🚀 Boost</button>
         </div>
     </div>
 
-    <script src="/static/script.js?v=11"></script>
+    <!-- ===== MENU ===== -->
+    <div class="menu-grid">
+        <button class="menu-item" onclick="showSection('mine')">
+            <span class="menu-icon">⛏️</span>
+            <span class="menu-label">Mine</span>
+        </button>
+        <button class="menu-item" onclick="showSection('upgrade')">
+            <span class="menu-icon">⬆️</span>
+            <span class="menu-label">Upgrade</span>
+        </button>
+        <button class="menu-item" onclick="showSection('raid')">
+            <span class="menu-icon">⚔️</span>
+            <span class="menu-label">Raid</span>
+        </button>
+        <button class="menu-item" onclick="showSection('earn')">
+            <span class="menu-icon">💰</span>
+            <span class="menu-label">Earn</span>
+        </button>
+        <button class="menu-item" onclick="showSection('founder')">
+            <span class="menu-icon">👑</span>
+            <span class="menu-label">Founder</span>
+        </button>
+    </div>
+
+    <!-- ===== SECTIONS ===== -->
+    <div id="sectionMine" class="section active">
+        <div class="section-card">
+            <h3>⛏️ Mining</h3>
+            <p>Energiyangizni sarflab qazib oling!</p>
+            <div class="stats-row">
+                <span>💰 Har bir tap: <strong id="earnPerTap">1.00</strong></span>
+                <span>⚡ Energiya: <strong id="energyDisplay">400</strong></span>
+            </div>
+        </div>
+    </div>
+
+    <div id="sectionUpgrade" class="section">
+        <div class="section-card">
+            <h3>⬆️ Upgradelar</h3>
+            <div id="upgradesList"></div>
+        </div>
+    </div>
+
+    <div id="sectionRaid" class="section">
+        <div class="section-card">
+            <h3>⚔️ Raid</h3>
+            <p>Boshqa o'yinchilarga hujum qiling va ularning resurslarini o'g'irlang!</p>
+            <button class="action-btn" onclick="startRaid()">🔥 Raid boshlash</button>
+        </div>
+    </div>
+
+    <div id="sectionEarn" class="section">
+        <div class="section-card">
+            <h3>💰 Topshiriqlar</h3>
+            <div id="tasksList"></div>
+        </div>
+    </div>
+
+    <div id="sectionFounder" class="section">
+        <div class="section-card">
+            <h3>👑 Founder</h3>
+            <p>Asoschilar jamoasiga qo'shiling va maxsus imtiyozlarga ega bo'ling!</p>
+            <button class="action-btn gold" onclick="becomeFounder()">👑 Asoschi bo'lish</button>
+        </div>
+    </div>
+
+    <!-- ===== LEADERBOARD ===== -->
+    <section class="leaderboard-section">
+        <h3>🏆 TOP O'YINCHILAR</h3>
+        <div id="leaderboardList"></div>
+    </section>
+
+    <!-- ===== REFERRAL ===== -->
+    <section class="referral-section">
+        <h3>👥 Do'stingni chaqir</h3>
+        <p>Do'stingiz qo'shilsa sizga <strong>+100 🌶️</strong> bonus!</p>
+        <button class="share-btn" onclick="shareGame()">🚀 DO'STIMNI TAKLIF QILISH</button>
+    </section>
+
+    <!-- ===== FOOTER ===== -->
+    <footer class="footer">QALAMPIR MINER © 2026</footer>
+</div>
+
+<!-- ===== OFFLINE MODAL ===== -->
+<div id="offlineModal" class="modal hidden">
+    <div class="modal-box">
+        <h2>🎉 Siz yo'qligingizda!</h2>
+        <p>Stansiyalaringiz <strong id="offlineAmount">0</strong> 🌶️ ishlab chiqardi!</p>
+        <button class="modal-btn" onclick="closeOfflineModal()">Yig'ib olish</button>
+    </div>
+</div>
+
+<script src="script.js"></script>
 </body>
 </html>
