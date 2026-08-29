@@ -1,233 +1,442 @@
-:root {
-    --bg-color: #090d16;
-    --card-bg: #151f32;
-    --card-border: rgba(34, 197, 94, 0.2);
-    --accent-color: #22c55e;
-    --star-color: #eab308;
-    --text-color: #f8fafc;
-    --text-sub: #94a3b8;
-}
-
-body {
+* {
     margin: 0;
-    padding: 16px;
-    padding-top: 55px;
-    background-color: var(--bg-color);
-    color: var(--text-color);
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    user-select: none;
+    padding: 0;
+    box-sizing: border-box;
     -webkit-tap-highlight-color: transparent;
 }
 
-#app {
+:root {
+    --bg: #0d0b0a;
+    --bg-card: #1a1410;
+    --bg-card-hover: #2a1c14;
+    --orange: #ff6b2c;
+    --gold: #ffb800;
+    --text: #f5ede6;
+    --text-muted: #8a7a6a;
+    --gradient: linear-gradient(135deg, #ff6b2c, #ff4500);
+    --shadow: 0 4px 20px rgba(255, 107, 44, 0.25);
+    --radius: 16px;
+}
+
+body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    min-height: 100vh;
     display: flex;
-    flex-direction: column;
-    gap: 16px;
-    max-width: 480px;
-    margin: 0 auto;
+    justify-content: center;
+    padding: 12px;
 }
 
-/* Header & Stat Cards */
-.stats-card, .section-container {
-    background: var(--card-bg);
-    padding: 16px;
-    border-radius: 18px;
-    border: 1px solid var(--card-border);
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+.app {
+    max-width: 420px;
+    width: 100%;
 }
 
-.value-box { font-size: 30px; font-weight: 900; color: var(--accent-color); text-shadow: 0 0 12px rgba(34, 197, 94, 0.3); }
-.unit { font-size: 16px; color: var(--text-sub); }
-
-.stat-group {
+/* ===== TOPBAR ===== */
+.topbar {
     display: flex;
     justify-content: space-between;
-    margin-top: 10px;
-    font-size: 14px;
-    background: rgba(0, 0, 0, 0.2);
-    padding: 8px 12px;
-    border-radius: 10px;
-}
-
-/* Visuallashtirilgan Stansiyalar Hub-i */
-.hub-title {
-    font-size: 14px;
-    font-weight: bold;
-    color: var(--text-sub);
+    align-items: center;
+    background: var(--bg-card);
+    padding: 12px 16px;
+    border-radius: var(--radius);
     margin-bottom: 12px;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
 }
 
-.stations-visual-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
+.profile {
+    display: flex;
+    align-items: center;
     gap: 10px;
 }
 
-.station-visual-card {
-    background: #0d1424;
-    border: 1px solid rgba(255, 255, 255, 0.08);
-    border-radius: 14px;
-    padding: 12px 6px;
+.avatar {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: var(--gradient);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    box-shadow: var(--shadow);
+}
+
+.name {
+    font-weight: 700;
+    font-size: 15px;
+}
+
+.level {
+    font-size: 11px;
+    color: var(--gold);
+}
+
+.balance {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255, 107, 44, 0.1);
+    padding: 6px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 107, 44, 0.15);
+    font-weight: 700;
+    color: var(--gold);
+}
+
+/* ===== HERO ===== */
+.hero {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 12px;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    text-align: center;
+}
+
+.stat-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.stat-label {
+    font-size: 10px;
+    color: var(--text-muted);
+    text-transform: uppercase;
+}
+
+.stat-value {
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--gold);
+}
+
+/* ===== MINE BUTTON ===== */
+.mine-zone {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 20px 16px;
+    text-align: center;
+    margin-bottom: 12px;
+}
+
+.mine-btn {
+    width: 160px;
+    height: 160px;
+    border-radius: 50%;
+    background: var(--gradient);
+    border: none;
+    cursor: pointer;
+    margin: 0 auto 12px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    box-shadow: 0 0 40px rgba(255, 107, 44, 0.3);
+    transition: transform 0.08s ease;
     position: relative;
     overflow: hidden;
-    height: 90px;
 }
 
-.st-name {
-    font-size: 10px;
-    color: var(--text-sub);
-    margin-top: 8px;
-    text-align: center;
-}
-
-/* 1. Quyosh Paneli Animatsiyasi */
-.solar-card .sun-glow {
+.mine-btn::after {
+    content: '';
     position: absolute;
-    width: 30px; height: 30px;
-    background: radial-gradient(circle, #f59e0b 0%, transparent 70%);
-    top: 5px; right: 5px;
-    animation: pulseSun 2s infinite alternate;
-}
-.solar-panel-icon {
-    font-size: 26px;
-    z-index: 2;
-}
-@keyframes pulseSun {
-    0% { transform: scale(0.8); opacity: 0.6; }
-    100% { transform: scale(1.3); opacity: 1; }
-}
-
-/* 2. Shamol Generatori Animatsiyasi */
-.wind-turbine {
-    position: relative;
-    width: 30px;
-    height: 35px;
-}
-.turbine-pole {
-    position: absolute;
-    bottom: 0; left: 14px;
-    width: 2px; height: 20px;
-    background: #64748b;
-}
-.turbine-blade {
-    position: absolute;
-    top: 2px; left: 14px;
-    width: 2px; height: 12px;
-    background: #38bdf8;
-    transform-origin: bottom center;
-    animation: spinBlade 1.2s linear infinite;
-}
-.blade-2 { transform: rotate(120deg); }
-.blade-3 { transform: rotate(240deg); }
-
-@keyframes spinBlade {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-
-/* 3. Atom/Yadro Stansiyasi Animatsiyasi */
-.atom-core {
-    position: relative;
-    width: 35px; height: 35px;
-    display: flex; align-items: center; justify-content: center;
-}
-.nucleus { font-size: 20px; z-index: 2; animation: floatCore 1.5s ease-in-out infinite alternate; }
-.orbit {
-    position: absolute;
-    border: 1px solid #a855f7;
+    inset: -4px;
     border-radius: 50%;
-    width: 30px; height: 10px;
-}
-.orbit-1 { transform: rotate(30deg); animation: rotateOrbit 2s linear infinite; }
-.orbit-2 { transform: rotate(-30deg); animation: rotateOrbit 2s linear infinite reverse; }
-
-@keyframes rotateOrbit {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
-}
-@keyframes floatCore {
-    0% { transform: scale(0.9); }
-    100% { transform: scale(1.1); }
+    border: 2px solid rgba(255, 184, 0, 0.3);
+    animation: pulseRing 2s infinite;
 }
 
-/* Tap Zonasi */
-.miner-zone { display: flex; flex-direction: column; align-items: center; margin: 15px 0; }
-
-.eco-globe {
-    width: 145px; height: 145px;
-    background: radial-gradient(circle, #22c55e 0%, #15803d 100%);
-    border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    font-size: 68px; cursor: pointer;
-    box-shadow: 0 0 30px rgba(34, 197, 94, 0.4);
-    transition: transform 0.08s ease;
+@keyframes pulseRing {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.1); opacity: 1; }
 }
-.eco-globe:active { transform: scale(0.90); }
-.tap-hint { color: var(--text-sub); font-size: 12px; margin-top: 10px; }
 
-/* Grid va Kartochkalar */
-.stars-grid, .upgrades-grid { display: flex; flex-direction: column; gap: 10px; margin-top: 12px; }
+.mine-btn:active {
+    transform: scale(0.88);
+}
 
-.stars-card, .upgrade-card, .task-card {
-    background: #0d1424;
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px solid rgba(255, 255, 255, 0.05);
+.mine-icon {
+    font-size: 48px;
+    line-height: 1;
+}
+
+.mine-label {
+    font-size: 13px;
+    font-weight: 700;
+    margin-top: 4px;
+    color: white;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+}
+
+.mine-progress {
+    height: 4px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 4px;
+    overflow: hidden;
+    margin: 8px 0;
+}
+
+.progress-bar {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 4px;
+    transition: width 0.1s linear;
+}
+
+.mine-info {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.boost-btn {
+    background: var(--gradient);
+    border: none;
+    color: white;
+    padding: 4px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 12px;
+    cursor: pointer;
+}
+
+/* ===== MENU ===== */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 6px;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 8px 6px;
+    margin-bottom: 12px;
+}
+
+.menu-item {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 6px 0;
+    border-radius: 10px;
+    transition: all 0.2s;
+    font-size: 10px;
+}
+
+.menu-item.active {
+    color: var(--gold);
+    background: rgba(255, 184, 0, 0.06);
+}
+
+.menu-icon {
+    font-size: 22px;
+}
+
+.menu-label {
+    font-weight: 600;
+    margin-top: 2px;
+}
+
+/* ===== SECTIONS ===== */
+.section {
+    display: none;
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.section.active {
+    display: block;
+    animation: fadeSlide 0.25s ease;
+}
+
+@keyframes fadeSlide {
+    0% { opacity: 0; transform: translateY(10px); }
+    100% { opacity: 1; transform: translateY(0); }
+}
+
+.section-card h3 {
+    margin-bottom: 8px;
+    font-size: 16px;
+}
+
+.section-card p {
+    color: var(--text-muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+}
+
+.stats-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    padding: 6px 0;
+    border-top: 1px solid rgba(255,255,255,0.04);
+}
+
+/* ===== UPGRADES ===== */
+.upgrade-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.upgrade-item:last-child {
+    border-bottom: none;
 }
 
 .upgrade-info {
     display: flex;
     align-items: center;
-    gap: 12px;
-}
-.upg-icon {
-    font-size: 26px;
-    background: rgba(255, 255, 255, 0.05);
-    padding: 8px;
-    border-radius: 12px;
+    gap: 10px;
 }
 
-.sub-text { font-size: 11px; color: var(--text-sub); margin-top: 2px; }
+.upgrade-icon {
+    font-size: 24px;
+}
 
-.stars-btn, .upgrade-btn, .task-btn {
+.upgrade-name {
+    font-weight: 600;
+    font-size: 13px;
+}
+
+.upgrade-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.upgrade-price {
+    background: var(--gradient);
     border: none;
-    font-weight: bold;
-    padding: 10px 14px;
-    border-radius: 10px;
+    color: white;
+    padding: 4px 12px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 11px;
     cursor: pointer;
-    transition: all 0.2s;
 }
 
-.stars-btn { background: var(--star-color); color: #000; }
-.upgrade-btn, .task-btn { background: var(--accent-color); color: #000; }
-.upgrade-btn:disabled, .task-btn:disabled { background: #334155; color: #64748b; cursor: not-allowed; }
+.upgrade-price:disabled {
+    background: #2a2a2a;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
 
-/* Modal */
-.modal {
-    position: fixed; top: 0; left: 0; right: 0; bottom: 0;
-    background: rgba(0,0,0,0.85); display: flex; align-items: center; justify-content: center;
-    z-index: 1000;
+/* ===== TASKS ===== */
+.task-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
 }
-.hidden { display: none; }
-.modal-content { background: var(--card-bg); padding: 24px; border-radius: 20px; text-align: center; border: 1px solid var(--accent-color); }
-.modal-content button { background: var(--accent-color); border: none; padding: 10px 20px; border-radius: 10px; font-weight: bold; cursor: pointer; }
 
-/* Floating Text */
-.floating-number {
-    position: absolute; color: #4ade80; font-weight: 900; font-size: 24px; pointer-events: none;
-    text-shadow: 0 0 10px rgba(34, 197, 94, 0.8);
-    animation: floatUp 0.8s ease-out forwards;
+.task-item:last-child {
+    border-bottom: none;
 }
-@keyframes floatUp {
-    0% { opacity: 1; transform: translateY(0) scale(1); }
-    100% { opacity: 0; transform: translateY(-45px) scale(1.2); }
+
+.task-info {
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
+
+.task-icon {
+    font-size: 20px;
+}
+
+.task-title {
+    font-size: 13px;
+}
+
+.task-reward {
+    font-size: 11px;
+    color: var(--gold);
+}
+
+.task-btn {
+    background: var(--gold);
+    border: none;
+    color: #000;
+    padding: 4px 14px;
+    border-radius: 999px;
+    font-weight: 700;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.task-btn:disabled {
+    background: #2a2a2a;
+    color: var(--text-muted);
+    cursor: not-allowed;
+}
+
+/* ===== ACTION BUTTON ===== */
+.action-btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: var(--radius);
+    background: var(--gradient);
+    color: white;
+    font-weight: 700;
+    font-size: 15px;
+    cursor: pointer;
+    transition: transform 0.1s;
+}
+
+.action-btn:active {
+    transform: scale(0.97);
+}
+
+.action-btn.gold {
+    background: linear-gradient(135deg, #ffb800, #ff8c00);
+}
+
+/* ===== LEADERBOARD ===== */
+.leaderboard-section {
+    background: var(--bg-card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.leaderboard-section h3 {
+    margin-bottom: 10px;
+    font-size: 15px;
+}
+
+.rank-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 8px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+}
+
+.rank-item:last-child {
+    border-bottom: none;
+}
+
+.rank-num {
+    width: 24px;
+    font-weight: 700;
+    color: var(--text-muted);
+    font-size: 13px;
+}
+
+.rank-avatar {
+    font
