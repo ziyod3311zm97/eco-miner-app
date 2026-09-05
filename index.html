@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="uz">
+
 <head>
     <meta charset="UTF-8">
 
@@ -7,6 +8,8 @@
         name="viewport"
         content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no"
     >
+
+    <meta name="theme-color" content="#020817">
 
     <title>Qalampir Miner 🌶️</title>
 
@@ -17,15 +20,25 @@
 
 <body>
 
+<!-- =====================================================
+     NEON BACKGROUND
+====================================================== -->
+
 <div class="glow-orb glow-orb-1"></div>
 <div class="glow-orb glow-orb-2"></div>
 <div class="glow-orb glow-orb-3"></div>
 
+
 <div class="app">
 
-    <!-- ================= TOP BAR ================= -->
+
+    <!-- =================================================
+         TOP BAR
+    ================================================== -->
 
     <header class="topbar">
+
+        <!-- PROFILE -->
 
         <div class="profile">
 
@@ -34,75 +47,284 @@
                 <div class="avatar-ring"></div>
             </div>
 
-            <div>
-                <div class="name" id="playerName">
+            <div class="profile-data">
+
+                <div
+                    class="name"
+                    id="playerName"
+                >
                     O'yinchi
                 </div>
 
                 <div class="level">
-                    🏆 LVL
-                    <span id="levelDisplay">1</span>
+
+                    🏆
+
+                    <span data-i18n="level">
+                        LVL
+                    </span>
+
+                    <span id="levelDisplay">
+                        1
+                    </span>
+
                 </div>
+
             </div>
 
         </div>
 
-        <div class="balance">
-            🪙
-            <span id="coinBalance">0</span>
+
+        <!-- =================================================
+             LANGUAGE SWITCHER
+        ================================================== -->
+
+        <div class="language-selector">
+
+            <span class="language-globe">
+                🌐
+            </span>
+
+            <button
+                type="button"
+                class="language-btn active"
+                data-lang="uz"
+                onclick="setLanguage('uz')"
+            >
+                🇺🇿
+                <span>UZB</span>
+            </button>
+
+            <button
+                type="button"
+                class="language-btn"
+                data-lang="en"
+                onclick="setLanguage('en')"
+            >
+                🇬🇧
+                <span>ENG</span>
+            </button>
+
+            <button
+                type="button"
+                class="language-btn"
+                data-lang="ru"
+                onclick="setLanguage('ru')"
+            >
+                🇷🇺
+                <span>RUS</span>
+            </button>
+
+        </div>
+
+
+        <!-- HEADER BUTTONS -->
+
+        <div class="header-actions">
+
+            <button
+                type="button"
+                class="header-action"
+                onclick="toggleSettings()"
+            >
+                ⋮
+            </button>
+
+            <button
+                type="button"
+                class="header-action close"
+                onclick="closeGame()"
+            >
+                ×
+            </button>
+
         </div>
 
     </header>
 
 
-    <!-- ================= HERO STATS ================= -->
+    <!-- =================================================
+         PLAYER HERO / BALANCE
+    ================================================== -->
 
-    <section class="hero">
+    <section class="player-hero">
 
-        <div class="stats-grid">
+        <div class="hero-profile">
 
-            <div class="stat-item">
-                <span class="stat-label">
-                    ⚡ Quvvat
-                </span>
+            <div class="hero-avatar">
+                🌶️
+            </div>
 
-                <span
+            <div class="hero-profile-info">
+
+                <h1 id="heroName">
+                    QAZIB
+                </h1>
+
+                <div class="hero-level">
+
+                    🏆
+
+                    <span data-i18n="level">
+                        LVL
+                    </span>
+
+                    <span id="heroLevel">
+                        1
+                    </span>
+
+                </div>
+
+                <div class="xp-info">
+
+                    <span id="xpValue">
+                        0
+                    </span>
+
+                    /
+
+                    <span id="xpMax">
+                        100
+                    </span>
+
+                    XP
+
+                </div>
+
+                <div class="xp-bar">
+
+                    <div
+                        id="xpProgress"
+                        class="xp-progress"
+                        style="width:0%"
+                    ></div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BALANCE -->
+
+        <div class="balance-card">
+
+            <div class="balance-icon">
+                🌿
+            </div>
+
+            <div class="balance-content">
+
+                <div
+                    class="balance-value"
+                    id="coinBalance"
+                >
+                    0
+                </div>
+
+                <div
+                    class="balance-label"
+                    data-i18n="balance"
+                >
+                    BALANCE
+                </div>
+
+            </div>
+
+        </div>
+
+    </section>
+
+
+    <!-- =================================================
+         MAIN STATS
+    ================================================== -->
+
+    <section class="stats-grid">
+
+
+        <!-- POWER -->
+
+        <div class="stat-card power-card">
+
+            <div class="stat-icon">
+                ⚡
+            </div>
+
+            <div class="stat-content">
+
+                <div
+                    class="stat-label"
+                    data-i18n="power"
+                >
+                    Quvvat / Power
+                </div>
+
+                <div
                     class="stat-value"
                     id="energyRate"
                 >
                     1.0
-                </span>
+                </div>
+
             </div>
 
+        </div>
 
-            <div class="stat-item">
 
-                <span class="stat-label">
-                    🌿 CO2
-                </span>
+        <!-- MINED -->
 
-                <span
-                    class="stat-value co2"
-                    id="co2Level"
+        <div class="stat-card mined-card">
+
+            <div class="stat-icon">
+                ⛏️
+            </div>
+
+            <div class="stat-content">
+
+                <div
+                    class="stat-label"
+                    data-i18n="mined"
                 >
-                    50%
-                </span>
+                    Qazilgan / Mined
+                </div>
 
-            </div>
-
-
-            <div class="stat-item">
-
-                <span class="stat-label">
-                    ⛏️ Qazilgan
-                </span>
-
-                <span
+                <div
                     class="stat-value"
                     id="totalMines"
                 >
                     0
-                </span>
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- CO2 -->
+
+        <div class="stat-card co2-card">
+
+            <div class="stat-icon">
+                🌿
+            </div>
+
+            <div class="stat-content">
+
+                <div
+                    class="stat-label"
+                    data-i18n="co2"
+                >
+                    CO2 / CO₂
+                </div>
+
+                <div
+                    class="stat-value co2"
+                    id="co2Level"
+                >
+                    50%
+                </div>
 
             </div>
 
@@ -111,271 +333,505 @@
     </section>
 
 
-    <!-- ================= STAR RACE ================= -->
+    <!-- =================================================
+         STAR RACE
+    ================================================== -->
 
     <section class="race-banner">
 
-        <div>
+        <div class="race-decoration">
+            ✨
+        </div>
 
-            <b>
-                🔥 STAR RACE
-            </b>
+        <div class="race-star">
+            ⭐
+        </div>
 
-            <small>
+        <div class="race-info">
+
+            <h2 data-i18n="starRace">
+                STAR RACE
+            </h2>
+
+            <p data-i18n="raceDescription">
                 Eng faol minerlar kunlik reyting uchun kurashadi
-            </small>
+            </p>
 
         </div>
 
-        <div
-            class="race-timer"
-            id="raceTimer"
-        >
-            00:00:00
+
+        <div class="race-timer-box">
+
+            <div
+                class="race-updated"
+                data-i18n="updated"
+            >
+                ⏱️ YANGILANADI / UPDATED
+            </div>
+
+            <div
+                class="race-timer"
+                id="raceTimer"
+            >
+                00:00:00
+            </div>
+
         </div>
 
     </section>
 
 
-    <!-- ================= MINING ================= -->
+    <!-- =================================================
+         LARGE LANGUAGE SELECTOR
+    ================================================== -->
 
-    <div class="mine-zone">
+    <section class="large-language-selector">
 
-        <div
-            id="tapBtn"
-            class="mine-btn"
+        <button
+            type="button"
+            class="large-language-btn active"
+            data-lang="uz"
+            onclick="setLanguage('uz')"
         >
-
-            <span class="icon">
-                ⛏️
-            </span>
-
-            <span class="label">
-                QAZIB OLISH
-            </span>
-
-        </div>
-
-
-        <div class="mine-progress">
-
-            <div
-                class="progress-bar"
-                id="progressBar"
-                style="width:100%"
-            ></div>
-
-        </div>
-
-
-        <div class="mine-info">
-
+            🇺🇿
             <span>
-                ⚡
-                <span id="energyLeft">
-                    400
-                </span>
-                / 400
+                O‘zbekcha
             </span>
+        </button>
+
+
+        <button
+            type="button"
+            class="large-language-btn"
+            data-lang="en"
+            onclick="setLanguage('en')"
+        >
+            🇬🇧
+            <span>
+                English
+            </span>
+        </button>
+
+
+        <button
+            type="button"
+            class="large-language-btn"
+            data-lang="ru"
+            onclick="setLanguage('ru')"
+        >
+            🇷🇺
+            <span>
+                Русский
+            </span>
+        </button>
+
+    </section>
+
+
+    <!-- =================================================
+         MINING PANEL
+    ================================================== -->
+
+    <section class="mining-panel">
+
+
+        <!-- TITLE -->
+
+        <div class="mining-header">
+
+            <div class="mining-title">
+
+                <span class="mining-title-icon">
+                    ⛏️
+                </span>
+
+                <span data-i18n="mining">
+                    QAZIB OLISH / MINING
+                </span>
+
+            </div>
 
 
             <button
+                type="button"
                 class="boost-btn"
                 onclick="boostEnergy()"
             >
-                🚀 Boost
+                🚀
+
+                <span data-i18n="boost">
+                    Boost
+                </span>
+
             </button>
 
         </div>
 
-    </div>
 
+        <!-- ENERGY -->
 
-    <!-- ================= NAVIGATION ================= -->
+        <div class="energy-row">
 
-    <nav class="menu-grid">
-
-        <button
-            class="menu-item active"
-            onclick="showSection('mine')"
-        >
-
-            <span class="menu-icon">
-                ⛏️
+            <span class="energy-icon">
+                ⚡
             </span>
 
-            <span class="menu-label">
-                Mine
+            <strong id="energyLeft">
+                400
+            </strong>
+
+            <span>
+                /
             </span>
 
-        </button>
+            <strong id="energyMax">
+                400
+            </strong>
+
+            <div class="energy-bar">
+
+                <div
+                    class="progress-bar"
+                    id="progressBar"
+                    style="width:100%"
+                ></div>
+
+            </div>
+
+        </div>
 
 
-        <button
-            class="menu-item"
-            onclick="showSection('upgrade')"
-        >
+        <!-- NAVIGATION -->
 
-            <span class="menu-icon">
-                ⬆️
-            </span>
-
-            <span class="menu-label">
-                Upgrade
-            </span>
-
-        </button>
+        <nav class="menu-grid">
 
 
-        <button
-            class="menu-item"
-            onclick="showSection('raid')"
-        >
+            <!-- MINE -->
 
-            <span class="menu-icon">
-                ⚔️
-            </span>
+            <button
+                type="button"
+                class="menu-item active"
+                onclick="showSection('mine')"
+            >
 
-            <span class="menu-label">
-                Raid
-            </span>
+                <span class="menu-icon">
+                    ⛏️
+                </span>
 
-        </button>
+                <span
+                    class="menu-label"
+                    data-i18n="mine"
+                >
+                    Mine
+                </span>
 
-
-        <button
-            class="menu-item"
-            onclick="showSection('earn')"
-        >
-
-            <span class="menu-icon">
-                🎁
-            </span>
-
-            <span class="menu-label">
-                Earn
-            </span>
-
-        </button>
+            </button>
 
 
-        <button
-            class="menu-item"
-            onclick="showSection('founder')"
-        >
+            <!-- UPGRADE -->
 
-            <span class="menu-icon">
-                👑
-            </span>
+            <button
+                type="button"
+                class="menu-item"
+                onclick="showSection('upgrade')"
+            >
 
-            <span class="menu-label">
-                Founder
-            </span>
+                <span class="menu-icon">
+                    ⬆️
+                </span>
 
-        </button>
+                <span
+                    class="menu-label"
+                    data-i18n="upgrade"
+                >
+                    Upgrade
+                </span>
 
-    </nav>
+            </button>
 
 
-    <!-- ================= MINE SECTION ================= -->
+            <!-- RAID -->
+
+            <button
+                type="button"
+                class="menu-item"
+                onclick="showSection('raid')"
+            >
+
+                <span class="menu-icon">
+                    ⚔️
+                </span>
+
+                <span
+                    class="menu-label"
+                    data-i18n="raid"
+                >
+                    Raid
+                </span>
+
+            </button>
+
+
+            <!-- EARN -->
+
+            <button
+                type="button"
+                class="menu-item"
+                onclick="showSection('earn')"
+            >
+
+                <span class="menu-icon">
+                    🎁
+                </span>
+
+                <span
+                    class="menu-label"
+                    data-i18n="earn"
+                >
+                    Earn
+                </span>
+
+            </button>
+
+
+            <!-- FOUNDER -->
+
+            <button
+                type="button"
+                class="menu-item"
+                onclick="showSection('founder')"
+            >
+
+                <span class="menu-icon">
+                    👑
+                </span>
+
+                <span
+                    class="menu-label"
+                    data-i18n="founder"
+                >
+                    Founder
+                </span>
+
+            </button>
+
+        </nav>
+
+    </section>
+
+
+    <!-- =================================================
+         MINE SECTION
+    ================================================== -->
 
     <div
         id="sectionMine"
         class="section active"
     >
 
-        <div class="section-card">
 
-            <h3>
-                ⛏️ Mining
-            </h3>
+        <!-- MINING INFO -->
 
-            <p>
-                Har bir tap sizga coin va STAR RACE ochkosi beradi.
-            </p>
+        <div class="section-card mining-info-card">
+
+            <div class="mine-card-icon">
+                ⛏️
+            </div>
+
+            <div class="mine-card-content">
+
+                <h3 data-i18n="mining">
+                    Mining
+                </h3>
+
+                <p data-i18n="miningDescription">
+                    Har bir tap sizga coin va STAR RACE ochkosi beradi.
+                </p>
 
 
-            <div class="stats-row">
+                <div class="stats-row">
 
-                <span>
-                    💰 Har tap:
-                    <strong id="earnPerTap">
-                        0.50
-                    </strong>
-                </span>
+                    <span>
+
+                        🪙
+
+                        <span data-i18n="perTap">
+                            Har tap
+                        </span>:
+
+                        <strong id="earnPerTap">
+                            0.50
+                        </strong>
+
+                    </span>
 
 
-                <span>
-                    🔥 Race:
-                    <strong id="racePoints">
-                        0
-                    </strong>
-                </span>
+                    <span>
+
+                        🔥
+
+                        <span data-i18n="race">
+                            Race
+                        </span>:
+
+                        <strong id="racePoints">
+                            0
+                        </strong>
+
+                    </span>
+
+                </div>
 
             </div>
 
         </div>
 
 
-        <!-- DAILY BONUS -->
+        <!-- =================================================
+             DAILY BONUS
+        ================================================== -->
 
         <div class="section-card daily-card">
 
-            <div>
+            <div class="card-icon">
+                🎁
+            </div>
 
-                <h3>
-                    🎁 Daily Bonus
+            <div class="card-content">
+
+                <h3 data-i18n="dailyBonus">
+                    Daily Bonus
                 </h3>
 
                 <p id="streakText">
                     Bugungi bonusni oling.
                 </p>
 
+                <button
+                    type="button"
+                    class="action-btn"
+                    id="dailyBtn"
+                    onclick="claimDaily()"
+                >
+                    OLISH / CLAIM / ПОЛУЧИТЬ
+                </button>
+
             </div>
-
-
-            <button
-                class="action-btn"
-                id="dailyBtn"
-                onclick="claimDaily()"
-            >
-                OLISH
-            </button>
 
         </div>
 
 
-        <!-- DAILY CHEST -->
+        <!-- =================================================
+             DAILY CHEST
+        ================================================== -->
 
         <div class="section-card chest-card">
 
-            <div>
+            <div class="card-icon">
+                📦
+            </div>
 
-                <h3>
-                    📦 Daily Chest
+            <div class="card-content">
+
+                <h3 data-i18n="dailyChest">
+                    Daily Chest
                 </h3>
 
-                <p>
+                <p data-i18n="chestDescription">
                     Har kuni bepul sandiq — random virtual coin.
+                </p>
+
+                <button
+                    type="button"
+                    class="action-btn blue"
+                    id="chestBtn"
+                    onclick="openChest()"
+                >
+                    OCHISH / OPEN / ОТКРЫТЬ
+                </button>
+
+            </div>
+
+        </div>
+
+
+        <!-- =================================================
+             UPGRADE PREVIEW
+        ================================================== -->
+
+        <div class="section-card upgrade-preview">
+
+            <div class="card-icon solar-icon">
+                ☀️
+            </div>
+
+            <div class="card-content">
+
+                <h3 data-i18n="upgradePreview">
+                    Upgrade / Yangilash
+                </h3>
+
+                <p data-i18n="solarUz">
+                    Quyosh Paneli (Lvl 1)
+                </p>
+
+                <p data-i18n="solarEn">
+                    Solar Panel (Lvl 1)
+                </p>
+
+                <p data-i18n="solarRu">
+                    Солнечная панель (Ур. 1)
                 </p>
 
             </div>
 
 
             <button
-                class="action-btn gold"
-                id="chestBtn"
-                onclick="openChest()"
+                type="button"
+                class="action-btn upgrade-button"
+                onclick="showSection('upgrade')"
             >
-                OCHISH
+
+                ⬆️
+
+                <span data-i18n="upgradeAction">
+                    YANGILASH / UPGRADE / УЛУЧШИТЬ
+                </span>
+
             </button>
 
         </div>
 
+
+        <!-- =================================================
+             BIG MINING BUTTON
+        ================================================== -->
+
+        <button
+            type="button"
+            id="tapBtn"
+            class="big-mine-button"
+        >
+
+            <span class="big-mine-icon">
+                ⛏️
+            </span>
+
+            <span
+                class="big-mine-text"
+                data-i18n="mineNow"
+            >
+                QAZIB OLISH / MINING / ДОБЫЧА
+            </span>
+
+        </button>
+
     </div>
 
 
-    <!-- ================= UPGRADE ================= -->
+    <!-- =================================================
+         UPGRADE SECTION
+    ================================================== -->
 
     <div
         id="sectionUpgrade"
@@ -385,7 +841,13 @@
         <div class="section-card">
 
             <h3>
-                ⬆️ Upgradelar
+
+                ⬆️
+
+                <span data-i18n="upgradeTitle">
+                    Upgradelar
+                </span>
+
             </h3>
 
             <div id="upgradesList"></div>
@@ -395,7 +857,9 @@
     </div>
 
 
-    <!-- ================= RAID ================= -->
+    <!-- =================================================
+         RAID SECTION
+    ================================================== -->
 
     <div
         id="sectionRaid"
@@ -405,19 +869,29 @@
         <div class="section-card">
 
             <h3>
-                ⚔️ Raid
+                ⚔️
+                <span data-i18n="raidTitle">
+                    Raid
+                </span>
             </h3>
 
-            <p>
+            <p data-i18n="raidDescription">
                 Bonus olish uchun mini raidni ishga tushiring.
             </p>
 
 
             <button
+                type="button"
                 class="action-btn"
                 onclick="startRaid()"
             >
-                🔥 RAID BOSHLASH
+
+                🔥
+
+                <span data-i18n="startRaid">
+                    RAID BOSHLASH
+                </span>
+
             </button>
 
         </div>
@@ -425,19 +899,28 @@
     </div>
 
 
-    <!-- ================= EARN ================= -->
+    <!-- =================================================
+         EARN SECTION
+    ================================================== -->
 
     <div
         id="sectionEarn"
         class="section"
     >
 
+
         <!-- DAILY MISSIONS -->
 
         <div class="section-card">
 
             <h3>
-                🎯 Daily Missions
+
+                🎯
+
+                <span data-i18n="dailyMissions">
+                    Daily Missions
+                </span>
+
             </h3>
 
             <div id="missionsList"></div>
@@ -445,12 +928,18 @@
         </div>
 
 
-        <!-- PERMANENT TASKS -->
+        <!-- TASKS -->
 
         <div class="section-card">
 
             <h3>
-                📋 Doimiy vazifalar
+
+                📋
+
+                <span data-i18n="tasks">
+                    Doimiy vazifalar
+                </span>
+
             </h3>
 
             <div id="tasksList"></div>
@@ -463,14 +952,18 @@
         <div class="section-card referral-card">
 
             <h3>
-                👥 Referral Race
+
+                👥
+
+                <span data-i18n="referralRace">
+                    Referral Race
+                </span>
+
             </h3>
 
-            <p>
-                Do'stingiz qo'shilsa
-                <b>
-                    +100 🌶️
-                </b>.
+
+            <p data-i18n="referralDescription">
+                Do'stingiz qo'shilsa +100 🌶️.
                 Qo'shimcha milestone bonuslari ham bor.
             </p>
 
@@ -481,7 +974,9 @@
                     0
                 </b>
 
-                do'st
+                <span data-i18n="friends">
+                    do'st
+                </span>
 
             </div>
 
@@ -492,10 +987,17 @@
 
 
             <button
+                type="button"
                 class="share-btn"
                 onclick="shareGame()"
             >
-                🚀 DO'STIMNI TAKLIF QILISH
+
+                🚀
+
+                <span data-i18n="inviteFriend">
+                    DO'STIMNI TAKLIF QILISH
+                </span>
+
             </button>
 
         </div>
@@ -503,7 +1005,9 @@
     </div>
 
 
-    <!-- ================= FOUNDER ================= -->
+    <!-- =================================================
+         FOUNDER SECTION
+    ================================================== -->
 
     <div
         id="sectionFounder"
@@ -512,21 +1016,36 @@
 
         <div class="section-card founder-card">
 
-            <h3>
-                👑 Founder
+            <div class="founder-icon">
+                👑
+            </div>
+
+            <h3 data-i18n="founderTitle">
+                Founder
             </h3>
 
-            <p>
+            <p data-i18n="founderDescription">
                 Founder bo'ling va doimiy quvvat bonusini oling.
             </p>
 
 
             <button
+                type="button"
                 class="action-btn gold"
                 id="founderBtn"
                 onclick="becomeFounder()"
             >
-                👑 500 🌶️ — ASOSCHI BO'LISH
+
+                👑
+
+                500 🌶️
+
+                —
+
+                <span data-i18n="becomeFounder">
+                    ASOSCHI BO'LISH
+                </span>
+
             </button>
 
         </div>
@@ -534,31 +1053,110 @@
     </div>
 
 
-    <!-- ================= LEADERBOARD ================= -->
+    <!-- =================================================
+         LEADERBOARD
+    ================================================== -->
 
     <section class="leaderboard-section">
 
         <h3>
-            🏆 STAR RACE TOP 10
+
+            🏆
+
+            <span data-i18n="leaderboardTitle">
+                STAR RACE TOP 10
+            </span>
+
         </h3>
+
 
         <div id="leaderboardList"></div>
 
     </section>
 
 
-    <!-- ================= FOOTER ================= -->
+    <!-- =================================================
+         FOOTER
+    ================================================== -->
 
     <footer class="footer">
 
-        QALAMPIR MINER © 2026
+        🌶️
+
+        QALAMPIR MINER
+
+        © 2026
 
     </footer>
 
 </div>
 
 
-<!-- ================= OFFLINE MODAL ================= -->
+<!-- =====================================================
+     SETTINGS PANEL
+====================================================== -->
+
+<div
+    id="settingsPanel"
+    class="settings-panel hidden"
+>
+
+    <div class="settings-box">
+
+        <button
+            type="button"
+            class="settings-close"
+            onclick="toggleSettings()"
+        >
+            ×
+        </button>
+
+
+        <h2>
+            ⚙️
+            Settings
+        </h2>
+
+
+        <div class="settings-language-title">
+            Language / Язык / Til
+        </div>
+
+
+        <button
+            type="button"
+            class="settings-lang"
+            onclick="setLanguage('uz')"
+        >
+            🇺🇿 O‘zbekcha
+        </button>
+
+
+        <button
+            type="button"
+            class="settings-lang"
+            onclick="setLanguage('en')"
+        >
+            🇬🇧 English
+        </button>
+
+
+        <button
+            type="button"
+            class="settings-lang"
+            onclick="setLanguage('ru')"
+        >
+            🇷🇺 Русский
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- =====================================================
+     OFFLINE MODAL
+====================================================== -->
 
 <div
     id="offlineModal"
@@ -567,25 +1165,45 @@
 
     <div class="modal-box">
 
-        <h2>
-            🎉 Siz yo'qligingizda!
+        <div class="modal-icon">
+            🎉
+        </div>
+
+
+        <h2 data-i18n="welcomeBack">
+            Siz yo'qligingizda!
         </h2>
 
 
         <p>
-            Stansiyalaringiz
+
+            <span data-i18n="offlineText">
+                Stansiyalaringiz
+            </span>
+
             <strong id="offlineAmount">
                 0
             </strong>
-            🌶️ ishlab chiqardi!
+
+            🌶️
+
+            <span data-i18n="offlineProduced">
+                ishlab chiqardi!
+            </span>
+
         </p>
 
 
         <button
+            type="button"
             class="modal-btn"
             onclick="closeOfflineModal()"
         >
-            Yig'ib olish
+
+            <span data-i18n="collect">
+                Yig'ib olish
+            </span>
+
         </button>
 
     </div>
@@ -593,9 +1211,604 @@
 </div>
 
 
-<!-- ================= JAVASCRIPT ================= -->
+<!-- =====================================================
+     ORIGINAL GAME SCRIPT
+====================================================== -->
 
 <script src="/static/script.js"></script>
+
+
+<!-- =====================================================
+     3 LANGUAGE SYSTEM
+====================================================== -->
+
+<script>
+
+(function () {
+
+    const translations = {
+
+        uz: {
+
+            level: "LVL",
+            balance: "BALANCE",
+
+            power: "Quvvat / Power",
+            mined: "Qazilgan / Mined",
+            co2: "CO2 / CO₂",
+
+            starRace: "STAR RACE",
+            raceDescription:
+                "Eng faol minerlar kunlik reyting uchun kurashadi",
+
+            updated:
+                "⏱️ YANGILANADI",
+
+            mining:
+                "QAZIB OLISH / MINING",
+
+            boost:
+                "Boost",
+
+            mine:
+                "Mine",
+
+            upgrade:
+                "Upgrade",
+
+            raid:
+                "Raid",
+
+            earn:
+                "Earn",
+
+            founder:
+                "Founder",
+
+            miningDescription:
+                "Har bir tap sizga coin va STAR RACE ochkosi beradi.",
+
+            perTap:
+                "Har tap",
+
+            race:
+                "Race",
+
+            dailyBonus:
+                "Daily Bonus",
+
+            dailyChest:
+                "Daily Chest",
+
+            chestDescription:
+                "Har kuni bepul sandiq — random virtual coin.",
+
+            upgradePreview:
+                "Upgrade / Yangilash",
+
+            solarUz:
+                "Quyosh Paneli (Lvl 1)",
+
+            solarEn:
+                "",
+
+            solarRu:
+                "",
+
+            upgradeAction:
+                "YANGILASH",
+
+            mineNow:
+                "QAZIB OLISH",
+
+            upgradeTitle:
+                "Upgradelar",
+
+            raidTitle:
+                "Raid",
+
+            raidDescription:
+                "Bonus olish uchun mini raidni ishga tushiring.",
+
+            startRaid:
+                "RAID BOSHLASH",
+
+            dailyMissions:
+                "Daily Missions",
+
+            tasks:
+                "Doimiy vazifalar",
+
+            referralRace:
+                "Referral Race",
+
+            referralDescription:
+                "Do'stingiz qo'shilsa +100 🌶️. Qo'shimcha milestone bonuslari ham bor.",
+
+            friends:
+                "do'st",
+
+            inviteFriend:
+                "DO'STIMNI TAKLIF QILISH",
+
+            founderTitle:
+                "Founder",
+
+            founderDescription:
+                "Founder bo'ling va doimiy quvvat bonusini oling.",
+
+            becomeFounder:
+                "ASOSCHI BO'LISH",
+
+            leaderboardTitle:
+                "STAR RACE TOP 10",
+
+            welcomeBack:
+                "Siz yo'qligingizda!",
+
+            offlineText:
+                "Stansiyalaringiz",
+
+            offlineProduced:
+                "ishlab chiqardi!",
+
+            collect:
+                "Yig'ib olish"
+        },
+
+
+        en: {
+
+            level:
+                "LVL",
+
+            balance:
+                "BALANCE",
+
+            power:
+                "Power",
+
+            mined:
+                "Mined",
+
+            co2:
+                "CO₂",
+
+            starRace:
+                "STAR RACE",
+
+            raceDescription:
+                "The most active miners compete for the daily ranking",
+
+            updated:
+                "⏱️ UPDATED",
+
+            mining:
+                "MINING",
+
+            boost:
+                "Boost",
+
+            mine:
+                "Mine",
+
+            upgrade:
+                "Upgrade",
+
+            raid:
+                "Raid",
+
+            earn:
+                "Earn",
+
+            founder:
+                "Founder",
+
+            miningDescription:
+                "Every tap gives you coins and STAR RACE points.",
+
+            perTap:
+                "Per tap",
+
+            race:
+                "Race",
+
+            dailyBonus:
+                "Daily Bonus",
+
+            dailyChest:
+                "Daily Chest",
+
+            chestDescription:
+                "A free chest every day — random virtual coins.",
+
+            upgradePreview:
+                "Upgrade",
+
+            solarUz:
+                "",
+
+            solarEn:
+                "Solar Panel (Lvl 1)",
+
+            solarRu:
+                "",
+
+            upgradeAction:
+                "UPGRADE",
+
+            mineNow:
+                "MINING",
+
+            upgradeTitle:
+                "Upgrades",
+
+            raidTitle:
+                "Raid",
+
+            raidDescription:
+                "Start a mini raid to receive a bonus.",
+
+            startRaid:
+                "START RAID",
+
+            dailyMissions:
+                "Daily Missions",
+
+            tasks:
+                "Permanent Tasks",
+
+            referralRace:
+                "Referral Race",
+
+            referralDescription:
+                "Invite a friend and get +100 🌶️. Extra milestone rewards are available.",
+
+            friends:
+                "friends",
+
+            inviteFriend:
+                "INVITE FRIEND",
+
+            founderTitle:
+                "Founder",
+
+            founderDescription:
+                "Become a Founder and receive a permanent power bonus.",
+
+            becomeFounder:
+                "BECOME FOUNDER",
+
+            leaderboardTitle:
+                "STAR RACE TOP 10",
+
+            welcomeBack:
+                "While you were away!",
+
+            offlineText:
+                "Your stations produced",
+
+            offlineProduced:
+                "🌶️ while you were away!",
+
+            collect:
+                "Collect"
+        },
+
+
+        ru: {
+
+            level:
+                "УР",
+
+            balance:
+                "БАЛАНС",
+
+            power:
+                "Мощность",
+
+            mined:
+                "Добыто",
+
+            co2:
+                "CO₂",
+
+            starRace:
+                "STAR RACE",
+
+            raceDescription:
+                "Самые активные майнеры соревнуются за ежедневный рейтинг",
+
+            updated:
+                "⏱️ ОБНОВЛЕНИЕ",
+
+            mining:
+                "ДОБЫЧА",
+
+            boost:
+                "Буст",
+
+            mine:
+                "Добыча",
+
+            upgrade:
+                "Улучшения",
+
+            raid:
+                "Рейд",
+
+            earn:
+                "Заработок",
+
+            founder:
+                "Основатель",
+
+            miningDescription:
+                "Каждый тап приносит монеты и очки STAR RACE.",
+
+            perTap:
+                "За тап",
+
+            race:
+                "Рейтинг",
+
+            dailyBonus:
+                "Ежедневный бонус",
+
+            dailyChest:
+                "Ежедневный сундук",
+
+            chestDescription:
+                "Бесплатный сундук каждый день — случайные виртуальные монеты.",
+
+            upgradePreview:
+                "Улучшение",
+
+            solarUz:
+                "",
+
+            solarEn:
+                "",
+
+            solarRu:
+                "Солнечная панель (Ур. 1)",
+
+            upgradeAction:
+                "УЛУЧШИТЬ",
+
+            mineNow:
+                "ДОБЫЧА",
+
+            upgradeTitle:
+                "Улучшения",
+
+            raidTitle:
+                "Рейд",
+
+            raidDescription:
+                "Запустите мини-рейд, чтобы получить бонус.",
+
+            startRaid:
+                "НАЧАТЬ РЕЙД",
+
+            dailyMissions:
+                "Ежедневные задания",
+
+            tasks:
+                "Постоянные задания",
+
+            referralRace:
+                "Реферальная гонка",
+
+            referralDescription:
+                "Пригласите друга и получите +100 🌶️. Доступны дополнительные бонусы.",
+
+            friends:
+                "друзей",
+
+            inviteFriend:
+                "ПРИГЛАСИТЬ ДРУГА",
+
+            founderTitle:
+                "Основатель",
+
+            founderDescription:
+                "Станьте основателем и получите постоянный бонус мощности.",
+
+            becomeFounder:
+                "СТАТЬ ОСНОВАТЕЛЕМ",
+
+            leaderboardTitle:
+                "STAR RACE ТОП 10",
+
+            welcomeBack:
+                "Пока вас не было!",
+
+            offlineText:
+                "Ваши станции добыли",
+
+            offlineProduced:
+                "🌶️ пока вас не было!",
+
+            collect:
+                "Забрать"
+        }
+
+    };
+
+
+    /* =================================================
+       SET LANGUAGE
+    ================================================= */
+
+    window.setLanguage = function (lang) {
+
+        if (!translations[lang]) {
+            lang = "uz";
+        }
+
+        document.documentElement.lang = lang;
+
+        localStorage.setItem(
+            "qalampir_language",
+            lang
+        );
+
+
+        const dictionary =
+            translations[lang];
+
+
+        /* TEXTS */
+
+        document
+            .querySelectorAll("[data-i18n]")
+            .forEach(function (element) {
+
+                const key =
+                    element.getAttribute(
+                        "data-i18n"
+                    );
+
+                if (
+                    dictionary[key] !== undefined &&
+                    dictionary[key] !== ""
+                ) {
+
+                    element.textContent =
+                        dictionary[key];
+
+                }
+
+            });
+
+
+        /* LANGUAGE BUTTONS */
+
+        document
+            .querySelectorAll(
+                ".language-btn, .large-language-btn"
+            )
+            .forEach(function (button) {
+
+                button.classList.toggle(
+                    "active",
+                    button.dataset.lang === lang
+                );
+
+            });
+
+
+        /* SOLAR PANEL LANGUAGE */
+
+        const solarUz =
+            document.querySelector(
+                '[data-i18n="solarUz"]'
+            );
+
+        const solarEn =
+            document.querySelector(
+                '[data-i18n="solarEn"]'
+            );
+
+        const solarRu =
+            document.querySelector(
+                '[data-i18n="solarRu"]'
+            );
+
+
+        if (solarUz) solarUz.style.display =
+            lang === "uz" ? "block" : "none";
+
+        if (solarEn) solarEn.style.display =
+            lang === "en" ? "block" : "none";
+
+        if (solarRu) solarRu.style.display =
+            lang === "ru" ? "block" : "none";
+
+    };
+
+
+    /* =================================================
+       SETTINGS
+    ================================================= */
+
+    window.toggleSettings = function () {
+
+        const panel =
+            document.getElementById(
+                "settingsPanel"
+            );
+
+        if (!panel) {
+            return;
+        }
+
+        panel.classList.toggle("hidden");
+
+    };
+
+
+    /* =================================================
+       CLOSE GAME
+    ================================================= */
+
+    window.closeGame = function () {
+
+        try {
+
+            if (
+                window.Telegram &&
+                Telegram.WebApp
+            ) {
+
+                Telegram.WebApp.close();
+
+                return;
+            }
+
+        } catch (error) {
+
+            console.log(
+                "Telegram close unavailable",
+                error
+            );
+
+        }
+
+        const app =
+            document.querySelector(".app");
+
+        if (app) {
+
+            app.style.transition =
+                "opacity .3s ease";
+
+            app.style.opacity = "0";
+
+        }
+
+    };
+
+
+    /* =================================================
+       LOAD SAVED LANGUAGE
+    ================================================= */
+
+    const savedLanguage =
+        localStorage.getItem(
+            "qalampir_language"
+        );
+
+
+    setLanguage(
+        savedLanguage || "uz"
+    );
+
+})();
+
+</script>
+
 
 </body>
 </html>
